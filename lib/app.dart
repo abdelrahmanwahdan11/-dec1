@@ -1,0 +1,230 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'controllers/auth_controller.dart';
+import 'controllers/cart_controller.dart';
+import 'controllers/compare_controller.dart';
+import 'controllers/locale_controller.dart';
+import 'controllers/onboarding_controller.dart';
+import 'controllers/plant_catalog_controller.dart';
+import 'controllers/theme_controller.dart';
+import 'localization/app_localizations.dart';
+import 'models/user_settings.dart';
+import 'theme/app_theme.dart';
+import 'screens/onboarding/onboarding_screen.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/main/main_shell_screen.dart';
+import 'screens/plant/plant_details_screen.dart';
+import 'screens/compare/compare_screen.dart';
+import 'screens/checkout/checkout_screen.dart';
+import 'screens/success/success_screen.dart';
+import 'screens/stores/stores_screen.dart';
+import 'screens/auth/register_screen.dart';
+import 'screens/auth/forgot_password_screen.dart';
+
+class PlantsFresherApp extends StatefulWidget {
+  const PlantsFresherApp({super.key});
+
+  @override
+  State<PlantsFresherApp> createState() => _PlantsFresherAppState();
+}
+
+class _PlantsFresherAppState extends State<PlantsFresherApp> {
+  late final AuthController authController;
+  late final ThemeController themeController;
+  late final LocaleController localeController;
+  late final CartController cartController;
+  late final CompareController compareController;
+  late final PlantCatalogController catalogController;
+
+  Future<UserSettings> loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final seen = prefs.getBool('seen_onboarding') ?? false;
+    final theme = prefs.getString('theme_mode');
+    final primary = prefs.getString('primary_color_hex') ?? '#23A25D';
+    final locale = prefs.getString('locale_code') ?? 'en';
+    final isGuest = prefs.getBool('is_guest') ?? false;
+    return UserSettings(
+      themeMode: AppThemeMode.values.firstWhere(
+        (e) => e.name == theme,
+        orElse: () => AppThemeMode.system,
+      ),
+      primaryColorHex: primary,
+      localeCode: locale,
+      seenOnboarding: seen,
+      isGuest: isGuest,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    authController = AuthController();
+    cartController = CartController();
+    compareController = CompareController();
+    catalogController = PlantCatalogController();
+  }
+
+  @override
+  void dispose() {
+    catalogController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<UserSettings>(
+      future: loadSettings(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const MaterialApp(home: SizedBox());
+        }
+        final settings = snapshot.data!;
+        themeController = ThemeController(settings);
+        localeController = LocaleController(settings.localeCode);
+        if (settings.isGuest) {
+          authController.continueAsGuest();
+        }
+
+        return AnimatedBuilder(
+          animation: Listenable.merge([themeController, localeController]),
+          builder: (context, _) {
+            final locale = localeController.locale;
+            final textTheme = AppThemeBuilder.textTheme(locale);
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              locale: locale,
+              localizationsDelegates: const [
+                AppLocalizationsDelegate(),
+                GlobalMaterialLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
+              theme: AppThemeBuilder.light(locale, themeController),
+              darkTheme: AppThemeBuilder.dark(locale, themeController),
+              themeMode: themeController.themeMode,
+              builder: (context, child) {
+                final direction = locale.languageCode == 'ar'
+                    ? TextDirection.rtl
+                    : TextDirection.ltr;
+                return Directionality(textDirection: direction, child: child!);
+              },
+              initialRoute: _initialRoute(settings),
+              onGenerateRoute: (settingsRoute) {
+                final name = settingsRoute.name;
+                switch (name) {
+                  case '/onboarding':
+                    return MaterialPageRoute(
+                      builder: (_) => OnboardingScreen(
+                        onboardingController: OnboardingController(),
+                        onFinish: () {
+                          Navigator.of(context).pushReplacementNamed('/auth/login');
+                        },
+                      ),
+                    );
+                  case '/auth/login':
+                    return MaterialPageRoute(
+                        builder: (_) => LoginScreen(authController: authController));
+                  case '/auth/register':
+                    return MaterialPageRoute(builder: (_) => RegisterScreen(authController: authController));
+                  case '/auth/forgot':
+                    return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
+                  case '/main':
+                    return MaterialPageRoute(
+                      builder: (_) => AppScope(
+                        authController: authController,
+                        themeController: themeController,
+                        localeController: localeController,
+                        cartController: cartController,
+                        compareController: compareController,
+                        catalogController: catalogController,
+                        child: const MainShellScreen(),
+                      ),
+                    );
+                  case '/compare':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              catalogController: catalogController,
+                              child: const CompareScreen(),
+                            ));
+                  case '/checkout':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              catalogController: catalogController,
+                              child: const CheckoutScreen(),
+                            ));
+                  case '/success':
+                    return MaterialPageRoute(builder: (_) => const SuccessScreen());
+                  case '/stores':
+                    return MaterialPageRoute(builder: (_) => const StoresScreen());
+                  default:
+                    if (name != null && name.startsWith('/plant/')) {
+                      final id = name.split('/').last;
+                      return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                          authController: authController,
+                          themeController: themeController,
+                          localeController: localeController,
+                          cartController: cartController,
+                          compareController: compareController,
+                          catalogController: catalogController,
+                          child: PlantDetailsScreen(plantId: id),
+                        ),
+                      );
+                    }
+                    return null;
+                }
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _initialRoute(UserSettings settings) {
+    if (!settings.seenOnboarding) return '/onboarding';
+    if (!authController.isAuthenticated && !settings.isGuest) return '/auth/login';
+    return '/main';
+  }
+}
+
+class AppScope extends InheritedWidget {
+  final AuthController authController;
+  final ThemeController themeController;
+  final LocaleController localeController;
+  final CartController cartController;
+  final CompareController compareController;
+  final PlantCatalogController catalogController;
+
+  const AppScope({
+    super.key,
+    required this.authController,
+    required this.themeController,
+    required this.localeController,
+    required this.cartController,
+    required this.compareController,
+    required this.catalogController,
+    required Widget child,
+  }) : super(child: child);
+
+  static AppScope of(BuildContext context) {
+    final scope = context.dependOnInheritedWidgetOfExactType<AppScope>();
+    assert(scope != null, 'AppScope missing');
+    return scope!;
+  }
+
+  @override
+  bool updateShouldNotify(covariant AppScope oldWidget) => false;
+}

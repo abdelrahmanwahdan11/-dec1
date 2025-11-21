@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
+import '../../app.dart';
+import '../../controllers/theme_controller.dart';
+import '../../localization/app_localizations.dart';
+
+class ProfileTab extends StatelessWidget {
+  const ProfileTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final app = AppScope.of(context);
+    final t = AppLocalizations.of(context);
+    final primaryPresets = ['#23A25D', '#007AFF', '#FF9500', '#9B51E0', '#E63946'];
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          ListTile(
+            leading: const CircleAvatar(child: Icon(IconlyLight.profile)),
+            title: Text(app.authController.displayName),
+            subtitle: Text(app.authController.isGuest ? 'Guest' : 'Member'),
+          ),
+          const Divider(),
+          SwitchListTile(
+            value: app.themeController.appThemeMode == AppThemeMode.dark,
+            onChanged: (val) => app.themeController
+                .toggleMode(val ? AppThemeMode.dark : AppThemeMode.light),
+            title: Text(t.t('dark_mode')),
+          ),
+          ListTile(
+            title: Text(t.t('primary_color')),
+            subtitle: Wrap(
+              spacing: 8,
+              children: primaryPresets
+                  .map(
+                    (hex) => GestureDetector(
+                      onTap: () => app.themeController
+                          .updatePrimary(Color(int.parse(hex.replaceFirst('#', '0xff')))),
+                      child: CircleAvatar(
+                        backgroundColor: Color(int.parse(hex.replaceFirst('#', '0xff'))),
+                        radius: 16,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+          ListTile(
+            title: Text(t.t('language')),
+            trailing: DropdownButton<String>(
+              value: app.localeController.locale.languageCode,
+              onChanged: (v) {
+                if (v != null) app.localeController.switchLocale(Locale(v));
+              },
+              items: const [
+                DropdownMenuItem(value: 'en', child: Text('English')),
+                DropdownMenuItem(value: 'ar', child: Text('العربية')),
+              ],
+            ),
+          ),
+          ListTile(
+            leading: const Icon(IconlyLight.chart),
+            title: Text(t.t('compare')),
+            onTap: () => Navigator.pushNamed(context, '/compare'),
+          ),
+          ListTile(
+            leading: const Icon(IconlyLight.location),
+            title: Text(t.t('stores')),
+            onTap: () => Navigator.pushNamed(context, '/stores'),
+          ),
+          ListTile(
+            leading: const Icon(IconlyLight.logout),
+            title: Text(t.t('logout')),
+            onTap: () => app.authController.logout(),
+          ),
+        ],
+      ),
+    );
+  }
+}
