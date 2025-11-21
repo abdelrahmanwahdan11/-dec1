@@ -29,6 +29,11 @@ class SuccessScreen extends StatelessWidget {
                   context, MaterialPageRoute(builder: (_) => const MainShellScreen()), (route) => false),
               child: Text(t.t('back_home')),
             ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/orders'),
+              child: Text(t.t('view_orders')),
+            ),
           ],
         ),
       ),

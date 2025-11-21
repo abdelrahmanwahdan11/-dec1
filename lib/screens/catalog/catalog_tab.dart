@@ -122,7 +122,15 @@ class _CatalogTabState extends State<CatalogTab> {
                             if (state.hasMore)
                               TextButton(
                                 onPressed: () => catalog.loadPage(reset: false),
-                                child: const Text('Load more'),
+                                child: Text(t.t('load_more')),
+                              ),
+                            if (children.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 32),
+                                child: Text(
+                                  t.t('empty_cart'),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                           ],
                         );
@@ -139,6 +147,7 @@ class _CatalogTabState extends State<CatalogTab> {
   }
 
   void _showAiInfo(BuildContext context, Plant plant) {
+    final t = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       builder: (_) => Padding(
@@ -146,9 +155,9 @@ class _CatalogTabState extends State<CatalogTab> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('AI note for ${plant.nameEn}'),
+            Text(t.t('ai_mock_title')),
             const SizedBox(height: 8),
-            const Text('Static explanation placeholder. No external calls are made.'),
+            Text(t.t('ai_mock_body')),
           ],
         ),
       ),

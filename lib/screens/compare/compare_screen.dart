@@ -23,14 +23,32 @@ class CompareScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
                   columns: [
-                    const DataColumn(label: Text('Property')),
+                    DataColumn(label: Text(t.t('table_property'))),
                     ...items.map((p) => DataColumn(label: Text(p.nameEn))),
                   ],
                   rows: [
-                    DataRow(cells: [const DataCell(Text('Price'))] + items.map((p) => DataCell(Text('\$${p.price}'))).toList()),
-                    DataRow(cells: [const DataCell(Text('Height'))] + items.map((p) => DataCell(Text(p.heightRange))).toList()),
-                    DataRow(cells: [const DataCell(Text('Temperature'))] + items.map((p) => DataCell(Text(p.temperatureRange))).toList()),
-                    DataRow(cells: [const DataCell(Text('Humidity'))] + items.map((p) => DataCell(Text(p.humidity))).toList()),
+                    DataRow(
+                        cells: [DataCell(Text(t.t('table_price')))] +
+                            items.map((p) => DataCell(Text('\$${p.price}'))).toList()),
+                    DataRow(
+                        cells: [DataCell(Text(t.t('table_height')))] +
+                            items.map((p) => DataCell(Text(p.heightRange))).toList()),
+                    DataRow(
+                        cells: [DataCell(Text(t.t('table_temperature')))] +
+                            items.map((p) => DataCell(Text(p.temperatureRange))).toList()),
+                    DataRow(
+                        cells: [DataCell(Text(t.t('table_humidity')))] +
+                            items.map((p) => DataCell(Text(p.humidity))).toList()),
+                    DataRow(
+                        cells: [const DataCell(SizedBox())] +
+                            items
+                                .map((p) => DataCell(
+                                      IconButton(
+                                        icon: const Icon(Icons.close),
+                                        onPressed: () => app.compareController.remove(p.id),
+                                      ),
+                                    ))
+                                .toList()),
                   ],
                 ),
               ),

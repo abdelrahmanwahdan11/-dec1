@@ -15,6 +15,7 @@ class HomeTab extends StatelessWidget {
     final app = AppScope.of(context);
     final t = AppLocalizations.of(context);
     final heroPlant = mockPlants.first;
+    final locale = Localizations.localeOf(context);
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(16),
@@ -34,13 +35,13 @@ class HomeTab extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(heroPlant.nameEn,
+                      Text(heroPlant.localizedName(locale),
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge
                               ?.copyWith(color: Theme.of(context).colorScheme.primary)),
                       const SizedBox(height: 8),
-                      Text(heroPlant.shortDescriptionEn),
+                      Text(heroPlant.localizedShortDescription(locale)),
                       const SizedBox(height: 12),
                       PrimaryButton(
                         label: t.t('add_to_cart'),
@@ -65,19 +66,31 @@ class HomeTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text('Categories', style: Theme.of(context).textTheme.titleMedium),
+          Text(t.t('categories'), style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             children: [
-              Chip(label: const Text('Indoor'), avatar: const Icon(IconlyLight.home)),
-              Chip(label: const Text('Outdoor'), avatar: const Icon(IconlyLight.location)),
-              Chip(label: const Text('Flowers'), avatar: const Icon(IconlyLight.category)),
-              Chip(label: const Text('Tools'), avatar: const Icon(IconlyLight.paper)),
+              _categoryChip(context, t.t('indoor'), IconlyLight.home, () {
+                app.catalogController.setCategory(PlantCategory.indoor);
+                Navigator.pushNamed(context, '/catalog');
+              }),
+              _categoryChip(context, t.t('outdoor'), IconlyLight.location, () {
+                app.catalogController.setCategory(PlantCategory.outdoor);
+                Navigator.pushNamed(context, '/catalog');
+              }),
+              _categoryChip(context, t.t('flowers'), IconlyLight.category, () {
+                app.catalogController.setCategory(PlantCategory.flower);
+                Navigator.pushNamed(context, '/catalog');
+              }),
+              _categoryChip(context, t.t('tools'), IconlyLight.paper, () {
+                app.catalogController.setCategory(PlantCategory.tool);
+                Navigator.pushNamed(context, '/catalog');
+              }),
             ],
           ),
           const SizedBox(height: 16),
-          Text('Featured', style: Theme.of(context).textTheme.titleMedium),
+          Text(t.t('featured'), style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
           SizedBox(
             height: 320,
@@ -109,6 +122,7 @@ class HomeTab extends StatelessWidget {
   }
 
   void _showAiInfo(BuildContext context, plant) {
+    final t = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       builder: (_) => Padding(
@@ -116,13 +130,23 @@ class HomeTab extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text('AI Insights (mock)'),
-            SizedBox(height: 8),
-            Text('Future AI tips will appear here with personalized advice.'),
+          children: [
+            Text(t.t('ai_mock_title')),
+            const SizedBox(height: 8),
+            Text(t.t('ai_mock_body')),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _categoryChip(BuildContext context, String label, IconData icon, VoidCallback onTap) {
+    return ActionChip(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      avatar: Icon(icon, size: 18),
+      label: Text(label),
+      onPressed: onTap,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     );
   }
 }

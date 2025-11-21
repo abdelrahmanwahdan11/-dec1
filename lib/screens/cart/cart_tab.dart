@@ -21,7 +21,7 @@ class CartTab extends StatelessWidget {
                 valueListenable: app.cartController.cartItems,
                 builder: (context, items, _) {
                   if (items.isEmpty) {
-                    return const Center(child: Text('Cart is empty'));
+                    return Center(child: Text(t.t('empty_cart')));
                   }
                   return ListView.builder(
                     itemCount: items.length,

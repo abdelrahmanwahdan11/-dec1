@@ -22,11 +22,29 @@ class ProfileTab extends StatelessWidget {
             subtitle: Text(app.authController.isGuest ? 'Guest' : 'Member'),
           ),
           const Divider(),
-          SwitchListTile(
-            value: app.themeController.appThemeMode == AppThemeMode.dark,
-            onChanged: (val) => app.themeController
-                .toggleMode(val ? AppThemeMode.dark : AppThemeMode.light),
-            title: Text(t.t('dark_mode')),
+          ListTile(
+            title: Text(t.t('theme')),
+            subtitle: Row(
+              children: [
+                ChoiceChip(
+                  label: const Text('Light'),
+                  selected: app.themeController.appThemeMode == AppThemeMode.light,
+                  onSelected: (_) => app.themeController.toggleMode(AppThemeMode.light),
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(t.t('system_mode')),
+                  selected: app.themeController.appThemeMode == AppThemeMode.system,
+                  onSelected: (_) => app.themeController.toggleMode(AppThemeMode.system),
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(t.t('dark_mode')),
+                  selected: app.themeController.appThemeMode == AppThemeMode.dark,
+                  onSelected: (_) => app.themeController.toggleMode(AppThemeMode.dark),
+                ),
+              ],
+            ),
           ),
           ListTile(
             title: Text(t.t('primary_color')),
@@ -63,6 +81,11 @@ class ProfileTab extends StatelessWidget {
             leading: const Icon(IconlyLight.chart),
             title: Text(t.t('compare')),
             onTap: () => Navigator.pushNamed(context, '/compare'),
+          ),
+          ListTile(
+            leading: const Icon(IconlyLight.paper),
+            title: Text(t.t('orders')),
+            onTap: () => Navigator.pushNamed(context, '/orders'),
           ),
           ListTile(
             leading: const Icon(IconlyLight.location),

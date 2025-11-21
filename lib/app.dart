@@ -21,6 +21,7 @@ import 'screens/success/success_screen.dart';
 import 'screens/stores/stores_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/auth/forgot_password_screen.dart';
+import 'screens/orders/orders_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -168,6 +169,17 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                     return MaterialPageRoute(builder: (_) => const SuccessScreen());
                   case '/stores':
                     return MaterialPageRoute(builder: (_) => const StoresScreen());
+                  case '/orders':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              catalogController: catalogController,
+                              child: const OrdersScreen(),
+                            ));
                   default:
                     if (name != null && name.startsWith('/plant/')) {
                       final id = name.split('/').last;

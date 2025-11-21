@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../app.dart';
+import '../../localization/app_localizations.dart';
 import '../../widgets/primary_button.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -18,8 +20,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final app = AppScope.of(context);
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Checkout')),
+      appBar: AppBar(title: Text(t.t('checkout'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -27,7 +31,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Saved cards'),
+              Text(t.t('saved_cards'), style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
               SizedBox(
                 height: 140,
@@ -39,32 +43,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text('Add new card'),
+              Text(t.t('add_card'), style: Theme.of(context).textTheme.titleMedium),
               TextFormField(
                 controller: holderCtrl,
-                decoration: const InputDecoration(labelText: 'Card holder'),
-                validator: (v) => v != null && v.isNotEmpty ? null : 'Required',
+                decoration: InputDecoration(labelText: t.t('card_holder')),
+                validator: (v) => v != null && v.isNotEmpty ? null : t.t('apply'),
               ),
               TextFormField(
                 controller: numberCtrl,
-                decoration: const InputDecoration(labelText: 'Card number'),
-                validator: (v) => v != null && v.length >= 12 ? null : 'Invalid',
+                decoration: InputDecoration(labelText: t.t('card_number')),
+                validator: (v) => v != null && v.length >= 12 ? null : t.t('apply'),
               ),
               Row(
                 children: [
                   Expanded(
                     child: TextFormField(
                       controller: expiryCtrl,
-                      decoration: const InputDecoration(labelText: 'Expiry'),
-                      validator: (v) => v != null && v.isNotEmpty ? null : 'Invalid',
+                      decoration: InputDecoration(labelText: t.t('expiry')),
+                      validator: (v) => v != null && v.isNotEmpty ? null : t.t('apply'),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextFormField(
                       controller: cvcCtrl,
-                      decoration: const InputDecoration(labelText: 'CVC'),
-                      validator: (v) => v != null && v.length >= 3 ? null : 'Invalid',
+                      decoration: InputDecoration(labelText: t.t('cvc')),
+                      validator: (v) => v != null && v.length >= 3 ? null : t.t('apply'),
                     ),
                   ),
                 ],
@@ -72,11 +76,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               CheckboxListTile(
                 value: saveCard,
                 onChanged: (val) => setState(() => saveCard = val ?? true),
-                title: const Text('Save card for later'),
+                title: Text(t.t('save_card')),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    _totalRow(t.t('subtotal'), app.cartController.subtotal, context),
+                    _totalRow(t.t('delivery_fee'), app.cartController.deliveryFee, context),
+                    const Divider(),
+                    _totalRow(t.t('total'), app.cartController.total, context, bold: true),
+                  ],
+                ),
               ),
               const SizedBox(height: 12),
               PrimaryButton(
-                label: 'Pay securely',
+                label: t.t('pay_securely'),
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
                     Navigator.pushNamed(context, '/success');
@@ -86,6 +106,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _totalRow(String label, double value, BuildContext context, {bool bold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(fontWeight: bold ? FontWeight.w600 : null)),
+          Text('\$${value.toStringAsFixed(2)}',
+              style: TextStyle(
+                  fontWeight: bold ? FontWeight.w700 : null,
+                  color: bold ? Theme.of(context).colorScheme.primary : null)),
+        ],
       ),
     );
   }

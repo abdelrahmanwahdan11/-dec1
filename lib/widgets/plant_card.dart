@@ -23,6 +23,7 @@ class PlantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -58,7 +59,7 @@ class PlantCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    plant.nameEn,
+                    plant.localizedName(locale),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 4),

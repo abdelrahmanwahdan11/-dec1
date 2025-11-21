@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:iconly/iconly.dart';
 import '../../app.dart';
 import '../../data/mock_plants.dart';
+import '../../localization/app_localizations.dart';
 import '../../models/plant.dart';
 import '../../widgets/primary_button.dart';
 
@@ -22,6 +23,8 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
   Widget build(BuildContext context) {
     final plant = mockPlants.firstWhere((p) => p.id == widget.plantId);
     final app = AppScope.of(context);
+    final t = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openAiInfo(context, plant),
@@ -73,7 +76,8 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(plant.nameEn, style: Theme.of(context).textTheme.headlineSmall),
+                  Text(plant.localizedName(locale),
+                      style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 8),
                   Text('\$${plant.price.toStringAsFixed(2)}',
                       style: Theme.of(context)
@@ -81,7 +85,7 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
                           .titleLarge
                           ?.copyWith(color: Theme.of(context).colorScheme.primary)),
                   const SizedBox(height: 12),
-                  Text(plant.shortDescriptionEn),
+                  Text(plant.localizedShortDescription(locale)),
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
@@ -91,9 +95,9 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
                     padding: const EdgeInsets.all(12),
                     child: Column(
                       children: [
-                        _propRow(IconlyLight.arrow_down_circle, 'Height', plant.heightRange),
-                        _propRow(IconlyLight.sun, 'Temp', plant.temperatureRange),
-                        _propRow(IconlyLight.activity, 'Humidity', plant.humidity),
+                        _propRow(IconlyLight.arrow_down_circle, t.t('table_height'), plant.heightRange),
+                        _propRow(IconlyLight.sun, t.t('table_temperature'), plant.temperatureRange),
+                        _propRow(IconlyLight.activity, t.t('table_humidity'), plant.humidity),
                       ],
                     ),
                   ),
@@ -102,7 +106,7 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
                     children: [
                       Expanded(
                         child: PrimaryButton(
-                          label: 'Add to Cart',
+                          label: t.t('add_to_cart'),
                           onPressed: () => app.cartController.addToCart(plant),
                         ),
                       ),
@@ -138,6 +142,7 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
   }
 
   void _openAiInfo(BuildContext context, Plant plant) {
+    final t = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       builder: (_) => Padding(
@@ -145,9 +150,10 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('AI Info for ${plant.nameEn}', style: Theme.of(context).textTheme.titleMedium),
+            Text('${t.t('ai_info')} - ${plant.nameEn}',
+                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
-            const Text('Mock insights about plant care and styling. No API calls are executed.'),
+            Text(t.t('ai_mock_body')),
           ],
         ),
       ),

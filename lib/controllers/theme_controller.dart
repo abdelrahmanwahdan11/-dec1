@@ -32,6 +32,8 @@ class ThemeController extends ChangeNotifier {
 
   Future<void> toggleMode(AppThemeMode mode) async {
     _mode = mode;
+    _cachedLight = null;
+    _cachedDark = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_themeKey, mode.name);
     notifyListeners();
@@ -39,6 +41,8 @@ class ThemeController extends ChangeNotifier {
 
   Future<void> updatePrimary(Color color) async {
     _primary = color;
+    _cachedLight = null;
+    _cachedDark = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_primaryKey, '#${color.value.toRadixString(16)}');
     notifyListeners();
