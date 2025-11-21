@@ -31,6 +31,10 @@ class _CatalogTabState extends State<CatalogTab> {
             TextField(
               controller: searchCtrl,
               onChanged: catalog.search,
+              onSubmitted: (value) {
+                catalog.search(value);
+                catalog.rememberSearch(value);
+              },
               decoration: InputDecoration(
                 prefixIcon: const Icon(IconlyLight.search),
                 hintText: t.t('search'),
@@ -39,13 +43,49 @@ class _CatalogTabState extends State<CatalogTab> {
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
               ),
             ),
+            const SizedBox(height: 8),
+            ValueListenableBuilder<List<String>>(
+              valueListenable: catalog.recentSearches,
+              builder: (context, recents, _) {
+                if (recents.isEmpty) return const SizedBox.shrink();
+                return Row(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: recents
+                              .map(
+                                (q) => Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: ActionChip(
+                                    label: Text(q),
+                                    onPressed: () {
+                                      searchCtrl.text = q;
+                                      catalog.search(q);
+                                    },
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: catalog.clearRecent,
+                      child: Text(t.t('clear')),
+                    )
+                  ],
+                );
+              },
+            ),
             const SizedBox(height: 12),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
                   FilterChipWidget(
-                    label: 'All',
+                    label: t.t('all'),
                     selected: catalog.category == null,
                     onTap: () => catalog.setCategory(null),
                   ),
@@ -53,7 +93,7 @@ class _CatalogTabState extends State<CatalogTab> {
                     (c) => Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: FilterChipWidget(
-                        label: c.name,
+                        label: _categoryLabel(c, t),
                         selected: catalog.category == c,
                         onTap: () => catalog.setCategory(c),
                       ),
@@ -63,7 +103,7 @@ class _CatalogTabState extends State<CatalogTab> {
                     (d) => Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: FilterChipWidget(
-                        label: d.name,
+                        label: _difficultyLabel(d, t),
                         selected: catalog.difficulty == d,
                         onTap: () => catalog.setDifficulty(d),
                       ),
@@ -128,7 +168,7 @@ class _CatalogTabState extends State<CatalogTab> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 32),
                                 child: Text(
-                                  t.t('empty_cart'),
+                                  t.t('empty_catalog'),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -162,5 +202,31 @@ class _CatalogTabState extends State<CatalogTab> {
         ),
       ),
     );
+  }
+
+  String _categoryLabel(PlantCategory category, AppLocalizations t) {
+    switch (category) {
+      case PlantCategory.indoor:
+        return t.t('indoor');
+      case PlantCategory.outdoor:
+        return t.t('outdoor');
+      case PlantCategory.flower:
+        return t.t('flowers');
+      case PlantCategory.cactus:
+        return t.t('cactus');
+      case PlantCategory.tool:
+        return t.t('tools');
+    }
+  }
+
+  String _difficultyLabel(PlantDifficulty difficulty, AppLocalizations t) {
+    switch (difficulty) {
+      case PlantDifficulty.easy:
+        return t.t('easy');
+      case PlantDifficulty.medium:
+        return t.t('medium');
+      case PlantDifficulty.hard:
+        return t.t('hard');
+    }
   }
 }

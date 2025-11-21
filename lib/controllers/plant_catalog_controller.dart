@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/mock_plants.dart';
 import '../models/plant.dart';
 
@@ -33,6 +34,7 @@ class PlantCatalogState {
 
 class PlantCatalogController {
   static const _pageSize = 4;
+  static const _recentKey = 'recent_searches';
   final _stateController = StreamController<PlantCatalogState>.broadcast();
   final List<Plant> _all = mockPlants;
   String _search = '';
@@ -40,11 +42,13 @@ class PlantCatalogController {
   PlantDifficulty? _difficulty;
   int _page = 1;
   bool _isLoading = false;
+  final ValueNotifier<List<String>> recentSearches = ValueNotifier<List<String>>([]);
 
   Stream<PlantCatalogState> get stream => _stateController.stream;
 
   PlantCatalogController() {
     _emit();
+    _loadRecentSearches();
     loadPage(reset: true);
   }
 
@@ -104,6 +108,26 @@ class PlantCatalogController {
     _emit();
   }
 
+  Future<void> rememberSearch(String query) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return;
+    final updated = List<String>.from(recentSearches.value);
+    updated.remove(trimmed);
+    updated.insert(0, trimmed);
+    if (updated.length > 6) {
+      updated.removeRange(6, updated.length);
+    }
+    recentSearches.value = updated;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_recentKey, updated);
+  }
+
+  Future<void> clearRecent() async {
+    recentSearches.value = [];
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_recentKey);
+  }
+
   void setCategory(PlantCategory? category) {
     _category = category;
     _page = 1;
@@ -117,6 +141,12 @@ class PlantCatalogController {
   }
 
   void dispose() {
+    recentSearches.dispose();
     _stateController.close();
+  }
+
+  Future<void> _loadRecentSearches() async {
+    final prefs = await SharedPreferences.getInstance();
+    recentSearches.value = prefs.getStringList(_recentKey) ?? [];
   }
 }

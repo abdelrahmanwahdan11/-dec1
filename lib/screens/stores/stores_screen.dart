@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import '../../localization/app_localizations.dart';
 
 class StoresScreen extends StatelessWidget {
   const StoresScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     final branches = [
-      ('Downtown', '123 Green St', '9am - 8pm'),
-      ('Uptown', '55 Palm Ave', '10am - 9pm'),
-      ('Harbor', '9 Seaside Rd', '9am - 7pm'),
+      (t.t('downtown_branch'), '123 Green St', '9am - 8pm'),
+      (t.t('uptown_branch'), '55 Palm Ave', '10am - 9pm'),
+      (t.t('harbor_branch'), '9 Seaside Rd', '9am - 7pm'),
     ];
     return Scaffold(
-      appBar: AppBar(title: const Text('Stores')),
+      appBar: AppBar(title: Text(t.t('stores'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

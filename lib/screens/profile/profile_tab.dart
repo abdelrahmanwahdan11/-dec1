@@ -19,7 +19,7 @@ class ProfileTab extends StatelessWidget {
           ListTile(
             leading: const CircleAvatar(child: Icon(IconlyLight.profile)),
             title: Text(app.authController.displayName),
-            subtitle: Text(app.authController.isGuest ? 'Guest' : 'Member'),
+            subtitle: Text(app.authController.isGuest ? t.t('guest_user') : t.t('member_user')),
           ),
           const Divider(),
           ListTile(
@@ -91,6 +91,11 @@ class ProfileTab extends StatelessWidget {
             leading: const Icon(IconlyLight.location),
             title: Text(t.t('stores')),
             onTap: () => Navigator.pushNamed(context, '/stores'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(t.t('about')),
+            onTap: () => Navigator.pushNamed(context, '/about'),
           ),
           ListTile(
             leading: const Icon(IconlyLight.logout),

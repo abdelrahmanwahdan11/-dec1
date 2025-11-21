@@ -11,6 +11,7 @@ final mockOrders = [
     ],
     total: mockPlants[0].price + mockPlants[2].price * 2,
     date: DateTime.now().subtract(const Duration(days: 3)),
+    status: OrderStatus.processing,
   ),
   MockOrder(
     id: 'ORD-1002',
@@ -20,6 +21,7 @@ final mockOrders = [
     ],
     total: mockPlants[1].price + mockPlants[3].price,
     date: DateTime.now().subtract(const Duration(days: 9)),
+    status: OrderStatus.delivered,
   ),
 ];
 

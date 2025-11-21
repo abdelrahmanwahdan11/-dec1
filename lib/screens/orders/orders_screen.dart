@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import '../../data/mock_orders.dart';
 import '../../localization/app_localizations.dart';
+import '../../app.dart';
+import '../../models/mock_order.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
@@ -9,6 +11,8 @@ class OrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
+    final app = AppScope.of(context);
+    final locale = app.localeController.locale;
     return Scaffold(
       appBar: AppBar(title: Text(t.t('orders'))),
       body: ListView.separated(
@@ -37,7 +41,14 @@ class OrdersScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(order.id, style: Theme.of(context).textTheme.titleMedium),
                     const Spacer(),
-                    Text(formatOrderDate(order.date)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text('${t.t('order_date')}: ${formatOrderDate(order.date)}'),
+                        const SizedBox(height: 4),
+                        Chip(label: Text('${t.t('order_status')}: ${_statusLabel(order.status, t)}')),
+                      ],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -47,7 +58,7 @@ class OrdersScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         child: Image.network(item.plant.imageUrl, width: 56, height: 56, fit: BoxFit.cover),
                       ),
-                      title: Text(item.plant.nameEn),
+                      title: Text(item.plant.localizedName(locale)),
                       subtitle: Text('${item.quantity} x \$${item.plant.price.toStringAsFixed(2)}'),
                     )),
                 const Divider(),
@@ -59,6 +70,24 @@ class OrdersScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium),
                   ],
                 ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: TextButton.icon(
+                    icon: const Icon(Icons.refresh),
+                    label: Text(t.t('reorder')),
+                    onPressed: () {
+                      for (final item in order.items) {
+                        for (var i = 0; i < item.quantity; i++) {
+                          app.cartController.addToCart(item.plant);
+                        }
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(t.t('added_to_cart'))),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           );
@@ -67,5 +96,16 @@ class OrdersScreen extends StatelessWidget {
         itemCount: mockOrders.length,
       ),
     );
+  }
+
+  String _statusLabel(OrderStatus status, AppLocalizations t) {
+    switch (status) {
+      case OrderStatus.processing:
+        return t.t('status_processing');
+      case OrderStatus.shipped:
+        return t.t('status_shipped');
+      case OrderStatus.delivered:
+        return t.t('status_delivered');
+    }
   }
 }
