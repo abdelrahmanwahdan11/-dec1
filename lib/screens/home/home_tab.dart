@@ -383,6 +383,24 @@ class HomeTab extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            card(
+              onTap: () => Navigator.pushNamed(context, '/ar-preview'),
+              icon: Icons.view_in_ar,
+              title: t.t('ar_preview'),
+              subtitle: t.t('ar_preview_hint'),
+            ),
+            const SizedBox(width: 10),
+            card(
+              onTap: () => Navigator.pushNamed(context, '/achievements'),
+              icon: Icons.military_tech,
+              title: t.t('achievements'),
+              subtitle: t.t('achievements_subtitle'),
+            ),
+          ],
+        ),
       ],
     );
   }

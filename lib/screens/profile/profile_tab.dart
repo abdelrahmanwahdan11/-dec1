@@ -96,6 +96,18 @@ class ProfileTab extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, '/privacy'),
           ),
           ListTile(
+            leading: const Icon(Icons.view_in_ar),
+            title: Text(t.t('ar_preview')),
+            subtitle: Text(t.t('ar_preview_hint')),
+            onTap: () => Navigator.pushNamed(context, '/ar-preview'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.military_tech_outlined),
+            title: Text(t.t('achievements')),
+            subtitle: Text(t.t('achievements_subtitle')),
+            onTap: () => Navigator.pushNamed(context, '/achievements'),
+          ),
+          ListTile(
             leading: const Icon(IconlyLight.chart),
             title: Text(t.t('compare')),
             onTap: () => Navigator.pushNamed(context, '/compare'),

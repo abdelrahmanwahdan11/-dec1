@@ -28,6 +28,8 @@ import 'controllers/challenges_controller.dart';
 import 'controllers/quiz_controller.dart';
 import 'controllers/membership_controller.dart';
 import 'controllers/accessibility_controller.dart';
+import 'controllers/ar_controller.dart';
+import 'controllers/achievements_controller.dart';
 import 'localization/app_localizations.dart';
 import 'models/user_settings.dart';
 import 'data/mock_orders.dart';
@@ -73,6 +75,8 @@ import 'screens/accessibility/accessibility_screen.dart';
 import 'screens/encyclopedia/encyclopedia_screen.dart';
 import 'screens/tips/community_tips_screen.dart';
 import 'screens/privacy/privacy_center_screen.dart';
+import 'screens/ar/augmented_preview_screen.dart';
+import 'screens/achievements/achievements_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -108,6 +112,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
   late final QuizController quizController;
   late final MembershipController membershipController;
   late final AccessibilityController accessibilityController;
+  late final ArController arController;
+  late final AchievementsController achievementsController;
 
   Future<UserSettings> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -166,6 +172,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     challengesController = ChallengesController();
     quizController = QuizController();
     membershipController = MembershipController();
+    arController = ArController();
+    achievementsController = AchievementsController(rewardsController);
     challengesController.load();
     quizController.load();
     membershipController.load();
@@ -194,6 +202,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     quizController.dispose();
     membershipController.dispose();
     accessibilityController.dispose();
+    arController.dispose();
+    achievementsController.dispose();
     super.dispose();
   }
 
@@ -315,11 +325,13 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                         eventsController: eventsController,
                         galleryController: galleryController,
                         gardenController: gardenController,
-                              challengesController: challengesController,
-                              quizController: quizController,
-                              membershipController: membershipController,
-                              accessibilityController: accessibilityController,
-                              child: const MainShellScreen(),
+                        challengesController: challengesController,
+                        quizController: quizController,
+                        membershipController: membershipController,
+                        accessibilityController: accessibilityController,
+                        arController: arController,
+                        achievementsController: achievementsController,
+                        child: const MainShellScreen(),
                       ),
                     );
                   case '/compare':
@@ -351,6 +363,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const CompareScreen(),
                             ));
                   case '/checkout':
@@ -382,6 +396,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const CheckoutScreen(),
                             ));
                   case '/success':
@@ -415,6 +431,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const StoresScreen(),
                             ));
                   case '/orders':
@@ -446,6 +464,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const OrdersScreen(),
                             ));
                   case '/tracking':
@@ -478,6 +498,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: TrackingScreen(orderId: orderId ?? mockOrders.first.id),
                             ));
                   case '/about':
@@ -509,6 +531,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const AboutScreen(),
                             ));
                   case '/support':
@@ -540,6 +564,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const SupportScreen(),
                             ));
                   case '/favorites':
@@ -571,6 +597,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const FavoritesScreen(),
                             ));
                   case '/garden':
@@ -602,6 +630,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const GardenScreen(),
                             ));
                   case '/quiz':
@@ -633,6 +663,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const QuizScreen(),
                             ));
                   case '/challenges':
@@ -664,6 +696,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const ChallengesScreen(),
                             ));
                   case '/care':
@@ -695,6 +729,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const CareScheduleScreen(),
                             ));
                   case '/care/calendar':
@@ -726,6 +762,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const CareCalendarScreen(),
                             ));
                   case '/notifications':
@@ -757,6 +795,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const NotificationCenterScreen(),
                             ));
                   case '/guides':
@@ -788,6 +828,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const GuidesScreen(),
                             ));
                   case '/tips':
@@ -819,7 +861,75 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const CommunityTipsScreen(),
+                            ));
+                  case '/ar-preview':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              promoController: promoController,
+                              referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
+                              journalController: journalController,
+                              changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
+                              gardenController: gardenController,
+                              challengesController: challengesController,
+                              quizController: quizController,
+                              membershipController: membershipController,
+                              accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
+                              child: const AugmentedPreviewScreen(),
+                            ));
+                  case '/achievements':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              promoController: promoController,
+                              referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
+                              journalController: journalController,
+                              changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
+                              gardenController: gardenController,
+                              challengesController: challengesController,
+                              quizController: quizController,
+                              membershipController: membershipController,
+                              accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
+                              child: const AchievementsScreen(),
                             ));
                   case '/encyclopedia':
                     return MaterialPageRoute(
@@ -850,6 +960,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const EncyclopediaScreen(),
                             ));
                   case '/rewards':
@@ -881,6 +993,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const RewardsScreen(),
                             ));
                   case '/bundles':
@@ -952,6 +1066,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const AddressBookScreen(),
                             ));
                   case '/recent':
@@ -983,6 +1099,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const RecentlyViewedScreen(),
                             ));
                   case '/coupons':
@@ -1014,6 +1132,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const CouponsScreen(),
                             ));
                   case '/referrals':
@@ -1045,6 +1165,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const ReferralsScreen(),
                             ));
                 case '/diagnostics':
@@ -1076,6 +1198,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const DiagnosticsScreen(),
                           ));
                 case '/gifting':
@@ -1107,6 +1231,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const GiftingScreen(),
                           ));
                 case '/journal':
@@ -1138,6 +1264,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const JournalScreen(),
                           ));
                   case '/updates':
@@ -1169,6 +1297,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const UpdatesScreen(),
                             ));
                   case '/insights':
@@ -1200,6 +1330,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const InsightsScreen(),
                             ));
                   case '/events':
@@ -1231,6 +1363,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const EventsScreen(),
                             ));
                   case '/gallery':
@@ -1262,6 +1396,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const GalleryScreen(),
                             ));
                   case '/membership':
@@ -1293,6 +1429,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const MembershipScreen(),
                             ));
                   case '/accessibility':
@@ -1324,6 +1462,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const AccessibilityScreen(),
                             ));
                   case '/privacy':
@@ -1355,6 +1495,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: const PrivacyCenterScreen(),
                             ));
                   default:
@@ -1388,6 +1530,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               quizController: quizController,
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
+                              arController: arController,
+                              achievementsController: achievementsController,
                               child: PlantDetailsScreen(plantId: id),
                         ),
                       );
@@ -1446,6 +1590,8 @@ class AppScope extends InheritedWidget {
   final QuizController quizController;
   final MembershipController membershipController;
   final AccessibilityController accessibilityController;
+  final ArController arController;
+  final AchievementsController achievementsController;
 
   const AppScope({
     super.key,
@@ -1475,6 +1621,8 @@ class AppScope extends InheritedWidget {
     required this.quizController,
     required this.membershipController,
     required this.accessibilityController,
+    required this.arController,
+    required this.achievementsController,
     required Widget child,
   }) : super(child: child);
 
