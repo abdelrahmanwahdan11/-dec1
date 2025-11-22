@@ -285,6 +285,24 @@ class HomeTab extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            card(
+              onTap: () => Navigator.pushNamed(context, '/diagnostics'),
+              icon: IconlyBold.shield_done,
+              title: t.t('diagnostics'),
+              subtitle: t.t('diagnostics_hint'),
+            ),
+            const SizedBox(width: 10),
+            card(
+              onTap: () => Navigator.pushNamed(context, '/gifting'),
+              icon: Icons.card_giftcard,
+              title: t.t('gifting_center'),
+              subtitle: t.t('gifting_hint'),
+            ),
+          ],
+        ),
         const SizedBox(height: 8),
         Align(
           alignment: Alignment.centerLeft,

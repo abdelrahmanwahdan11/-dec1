@@ -17,6 +17,8 @@ import 'controllers/address_controller.dart';
 import 'controllers/recent_controller.dart';
 import 'controllers/promo_controller.dart';
 import 'controllers/referral_controller.dart';
+import 'controllers/diagnostics_controller.dart';
+import 'controllers/gift_controller.dart';
 import 'localization/app_localizations.dart';
 import 'models/user_settings.dart';
 import 'data/mock_orders.dart';
@@ -47,6 +49,8 @@ import 'screens/bundles/bundles_screen.dart';
 import 'screens/inspiration/inspiration_screen.dart';
 import 'screens/coupons/coupons_screen.dart';
 import 'screens/referrals/referrals_screen.dart';
+import 'screens/diagnostics/diagnostics_screen.dart';
+import 'screens/gifting/gifting_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -71,6 +75,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
   late final RecentController recentController;
   late final PromoController promoController;
   late final ReferralController referralController;
+  late final DiagnosticsController diagnosticsController;
+  late final GiftController giftController;
 
   Future<UserSettings> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -107,6 +113,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     recentController = RecentController();
     promoController = PromoController();
     referralController = ReferralController();
+    diagnosticsController = DiagnosticsController();
+    giftController = GiftController();
   }
 
   @override
@@ -121,6 +129,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     recentController.dispose();
     promoController.dispose();
     referralController.dispose();
+    diagnosticsController.dispose();
+    giftController.dispose();
     super.dispose();
   }
 
@@ -195,15 +205,17 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                         careController: careController,
                         notificationsController: notificationsController,
                         guidesController: guidesController,
-                              rewardsController: rewardsController,
-                              addressController: addressController,
-                              recentController: recentController,
-                              catalogController: catalogController,
-                              promoController: promoController,
-                              referralController: referralController,
-                              child: const MainShellScreen(),
-                            ),
-                          );
+                        rewardsController: rewardsController,
+                        addressController: addressController,
+                        recentController: recentController,
+                        catalogController: catalogController,
+                        promoController: promoController,
+                        referralController: referralController,
+                        diagnosticsController: diagnosticsController,
+                        giftController: giftController,
+                        child: const MainShellScreen(),
+                      ),
+                    );
                   case '/compare':
                     return MaterialPageRoute(
                         builder: (_) => AppScope(
@@ -222,6 +234,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const CompareScreen(),
                             ));
                   case '/checkout':
@@ -242,6 +256,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const CheckoutScreen(),
                             ));
                   case '/success':
@@ -264,6 +280,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const StoresScreen(),
                             ));
                   case '/orders':
@@ -284,6 +302,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const OrdersScreen(),
                             ));
                   case '/tracking':
@@ -305,6 +325,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: TrackingScreen(orderId: orderId ?? mockOrders.first.id),
                             ));
                   case '/about':
@@ -325,6 +347,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const AboutScreen(),
                             ));
                   case '/support':
@@ -345,6 +369,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const SupportScreen(),
                             ));
                   case '/favorites':
@@ -365,6 +391,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const FavoritesScreen(),
                             ));
                   case '/care':
@@ -385,6 +413,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const CareScheduleScreen(),
                             ));
                   case '/care/calendar':
@@ -405,6 +435,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const CareCalendarScreen(),
                             ));
                   case '/notifications':
@@ -425,6 +457,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const NotificationCenterScreen(),
                             ));
                   case '/guides':
@@ -445,6 +479,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const GuidesScreen(),
                             ));
                   case '/rewards':
@@ -465,6 +501,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const RewardsScreen(),
                             ));
                   case '/bundles':
@@ -525,6 +563,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const AddressBookScreen(),
                             ));
                   case '/recent':
@@ -545,6 +585,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const RecentlyViewedScreen(),
                             ));
                   case '/coupons':
@@ -565,6 +607,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const CouponsScreen(),
                             ));
                   case '/referrals':
@@ -585,8 +629,54 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               promoController: promoController,
                               referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
                               child: const ReferralsScreen(),
                             ));
+                case '/diagnostics':
+                  return MaterialPageRoute(
+                      builder: (_) => AppScope(
+                            authController: authController,
+                            themeController: themeController,
+                            localeController: localeController,
+                            cartController: cartController,
+                            compareController: compareController,
+                            favoritesController: favoritesController,
+                            careController: careController,
+                            notificationsController: notificationsController,
+                            guidesController: guidesController,
+                            rewardsController: rewardsController,
+                            addressController: addressController,
+                            recentController: recentController,
+                            catalogController: catalogController,
+                            promoController: promoController,
+                            referralController: referralController,
+                            diagnosticsController: diagnosticsController,
+                            giftController: giftController,
+                            child: const DiagnosticsScreen(),
+                          ));
+                case '/gifting':
+                  return MaterialPageRoute(
+                      builder: (_) => AppScope(
+                            authController: authController,
+                            themeController: themeController,
+                            localeController: localeController,
+                            cartController: cartController,
+                            compareController: compareController,
+                            favoritesController: favoritesController,
+                            careController: careController,
+                            notificationsController: notificationsController,
+                            guidesController: guidesController,
+                            rewardsController: rewardsController,
+                            addressController: addressController,
+                            recentController: recentController,
+                            catalogController: catalogController,
+                            promoController: promoController,
+                            referralController: referralController,
+                            diagnosticsController: diagnosticsController,
+                            giftController: giftController,
+                            child: const GiftingScreen(),
+                          ));
                   default:
                     if (name != null && name.startsWith('/plant/')) {
                       final id = name.split('/').last;
@@ -607,6 +697,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                           catalogController: catalogController,
                           promoController: promoController,
                           referralController: referralController,
+                          diagnosticsController: diagnosticsController,
+                          giftController: giftController,
                           child: PlantDetailsScreen(plantId: id),
                         ),
                       );
@@ -644,6 +736,8 @@ class AppScope extends InheritedWidget {
   final PlantCatalogController catalogController;
   final PromoController promoController;
   final ReferralController referralController;
+  final DiagnosticsController diagnosticsController;
+  final GiftController giftController;
 
   const AppScope({
     super.key,
@@ -662,6 +756,8 @@ class AppScope extends InheritedWidget {
     required this.catalogController,
     required this.promoController,
     required this.referralController,
+    required this.diagnosticsController,
+    required this.giftController,
     required Widget child,
   }) : super(child: child);
 
