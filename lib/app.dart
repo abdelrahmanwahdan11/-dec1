@@ -70,6 +70,7 @@ import 'screens/challenges/challenges_screen.dart';
 import 'screens/quiz/quiz_screen.dart';
 import 'screens/membership/membership_screen.dart';
 import 'screens/accessibility/accessibility_screen.dart';
+import 'screens/encyclopedia/encyclopedia_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -777,6 +778,37 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
                               child: const GuidesScreen(),
+                            ));
+                  case '/encyclopedia':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              promoController: promoController,
+                              referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
+                              journalController: journalController,
+                              changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
+                              gardenController: gardenController,
+                              challengesController: challengesController,
+                              quizController: quizController,
+                              membershipController: membershipController,
+                              accessibilityController: accessibilityController,
+                              child: const EncyclopediaScreen(),
                             ));
                   case '/rewards':
                     return MaterialPageRoute(

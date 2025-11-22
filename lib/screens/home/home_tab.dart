@@ -123,6 +123,8 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 16),
           _insightsStrip(context, app, t),
           const SizedBox(height: 16),
+          _encyclopediaStrip(context, t),
+          const SizedBox(height: 16),
           _quizStrip(context, app, t),
           const SizedBox(height: 16),
           _challengesStrip(context, app, t),
@@ -342,6 +344,24 @@ class HomeTab extends StatelessWidget {
               icon: IconlyBold.calendar,
               title: t.t('care_calendar'),
               subtitle: t.t('calendar_shortcut'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            card(
+              onTap: () => Navigator.pushNamed(context, '/encyclopedia'),
+              icon: Icons.menu_book_rounded,
+              title: t.t('encyclopedia'),
+              subtitle: t.t('encyclopedia_short'),
+            ),
+            const SizedBox(width: 10),
+            card(
+              onTap: () => Navigator.pushNamed(context, '/support'),
+              icon: IconlyBold.message,
+              title: t.t('support'),
+              subtitle: t.t('support_hint'),
             ),
           ],
         ),
@@ -755,6 +775,46 @@ class HomeTab extends StatelessWidget {
           ],
         ),
       ).animate().slide(begin: const Offset(0, 0.04)).fadeIn(),
+    );
+  }
+
+  Widget _encyclopediaStrip(BuildContext context, AppLocalizations t) {
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, '/encyclopedia'),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.7),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.18),
+              ),
+              child: const Icon(Icons.auto_stories, size: 28),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(t.t('encyclopedia'), style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 4),
+                  Text(
+                    t.t('encyclopedia_hint'),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios_rounded, size: 18),
+          ],
+        ),
+      ).animate().slide(begin: const Offset(0, 0.04)).fadeIn(duration: 220.ms),
     );
   }
 
