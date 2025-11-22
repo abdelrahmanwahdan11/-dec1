@@ -8,6 +8,7 @@ import 'controllers/locale_controller.dart';
 import 'controllers/onboarding_controller.dart';
 import 'controllers/plant_catalog_controller.dart';
 import 'controllers/theme_controller.dart';
+import 'controllers/favorites_controller.dart';
 import 'localization/app_localizations.dart';
 import 'models/user_settings.dart';
 import 'theme/app_theme.dart';
@@ -23,6 +24,7 @@ import 'screens/auth/register_screen.dart';
 import 'screens/auth/forgot_password_screen.dart';
 import 'screens/orders/orders_screen.dart';
 import 'screens/about/about_screen.dart';
+import 'screens/favorites/favorites_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -38,6 +40,7 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
   late final CartController cartController;
   late final CompareController compareController;
   late final PlantCatalogController catalogController;
+  late final FavoritesController favoritesController;
 
   Future<UserSettings> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -65,11 +68,13 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     cartController = CartController();
     compareController = CompareController();
     catalogController = PlantCatalogController();
+    favoritesController = FavoritesController();
   }
 
   @override
   void dispose() {
     catalogController.dispose();
+    favoritesController.dispose();
     super.dispose();
   }
 
@@ -140,6 +145,7 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                         localeController: localeController,
                         cartController: cartController,
                         compareController: compareController,
+                        favoritesController: favoritesController,
                         catalogController: catalogController,
                         child: const MainShellScreen(),
                       ),
@@ -152,6 +158,7 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               localeController: localeController,
                               cartController: cartController,
                               compareController: compareController,
+                              favoritesController: favoritesController,
                               catalogController: catalogController,
                               child: const CompareScreen(),
                             ));
@@ -163,6 +170,7 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               localeController: localeController,
                               cartController: cartController,
                               compareController: compareController,
+                              favoritesController: favoritesController,
                               catalogController: catalogController,
                               child: const CheckoutScreen(),
                             ));
@@ -178,6 +186,7 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               localeController: localeController,
                               cartController: cartController,
                               compareController: compareController,
+                              favoritesController: favoritesController,
                               catalogController: catalogController,
                               child: const OrdersScreen(),
                             ));
@@ -189,8 +198,21 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               localeController: localeController,
                               cartController: cartController,
                               compareController: compareController,
+                              favoritesController: favoritesController,
                               catalogController: catalogController,
                               child: const AboutScreen(),
+                            ));
+                  case '/favorites':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              catalogController: catalogController,
+                              child: const FavoritesScreen(),
                             ));
                   default:
                     if (name != null && name.startsWith('/plant/')) {
@@ -202,6 +224,7 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                           localeController: localeController,
                           cartController: cartController,
                           compareController: compareController,
+                          favoritesController: favoritesController,
                           catalogController: catalogController,
                           child: PlantDetailsScreen(plantId: id),
                         ),
@@ -230,6 +253,7 @@ class AppScope extends InheritedWidget {
   final LocaleController localeController;
   final CartController cartController;
   final CompareController compareController;
+  final FavoritesController favoritesController;
   final PlantCatalogController catalogController;
 
   const AppScope({
@@ -239,6 +263,7 @@ class AppScope extends InheritedWidget {
     required this.localeController,
     required this.cartController,
     required this.compareController,
+    required this.favoritesController,
     required this.catalogController,
     required Widget child,
   }) : super(child: child);

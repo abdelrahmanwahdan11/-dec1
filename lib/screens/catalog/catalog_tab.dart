@@ -114,68 +114,75 @@ class _CatalogTabState extends State<CatalogTab> {
             ),
             const SizedBox(height: 12),
             Expanded(
-              child: StreamBuilder<PlantCatalogState>(
-                stream: catalog.stream,
-                builder: (context, snapshot) {
-                  final state = snapshot.data;
-                  if (state == null || state.isLoading && (state.items.isEmpty)) {
-                    return ListView.builder(
-                      itemCount: 4,
-                      itemBuilder: (_, __) => const SkeletonPlantCard(),
-                    );
-                  }
-                  return RefreshIndicator(
-                    onRefresh: () => catalog.loadPage(reset: true),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isGrid = constraints.maxWidth > 700;
-                        final items = state.items;
-                        final children = items.map((plant) {
-                          final compared = app.compareController.compared.value
-                              .any((p) => p.id == plant.id);
-                          return PlantCard(
-                            plant: plant,
-                            compared: compared,
-                            onAddToCart: () => app.cartController.addToCart(plant),
-                            onCompare: () => app.compareController.toggle(plant),
-                            onAiInfo: () => _showAiInfo(context, plant),
-                            onTap: () => Navigator.pushNamed(context, '/plant/${plant.id}'),
-                          );
-                        }).toList();
-                        return ListView(
-                          children: [
-                            isGrid
-                                ? GridView.count(
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    crossAxisCount: 2,
-                                    shrinkWrap: true,
-                                    childAspectRatio: 0.8,
-                                    children: children,
-                                  )
-                                : SizedBox(
-                                    height: 320,
-                                    child: ListView(
-                                      scrollDirection: Axis.horizontal,
-                                      children: children,
+              child: ValueListenableBuilder<Set<String>>(
+                valueListenable: app.favoritesController.favorites,
+                builder: (context, favorites, _) {
+                  return StreamBuilder<PlantCatalogState>(
+                    stream: catalog.stream,
+                    builder: (context, snapshot) {
+                      final state = snapshot.data;
+                      if (state == null || state.isLoading && (state.items.isEmpty)) {
+                        return ListView.builder(
+                          itemCount: 4,
+                          itemBuilder: (_, __) => const SkeletonPlantCard(),
+                        );
+                      }
+                      return RefreshIndicator(
+                        onRefresh: () => catalog.loadPage(reset: true),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final isGrid = constraints.maxWidth > 700;
+                            final items = state.items;
+                            final children = items.map((plant) {
+                              final compared = app.compareController.compared.value
+                                  .any((p) => p.id == plant.id);
+                              return PlantCard(
+                                plant: plant,
+                                compared: compared,
+                                favorite: favorites.contains(plant.id),
+                                onFavoriteToggle: () => app.favoritesController.toggle(plant),
+                                onAddToCart: () => app.cartController.addToCart(plant),
+                                onCompare: () => app.compareController.toggle(plant),
+                                onAiInfo: () => _showAiInfo(context, plant),
+                                onTap: () => Navigator.pushNamed(context, '/plant/${plant.id}'),
+                              );
+                            }).toList();
+                            return ListView(
+                              children: [
+                                isGrid
+                                    ? GridView.count(
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        crossAxisCount: 2,
+                                        shrinkWrap: true,
+                                        childAspectRatio: 0.8,
+                                        children: children,
+                                      )
+                                    : SizedBox(
+                                        height: 320,
+                                        child: ListView(
+                                          scrollDirection: Axis.horizontal,
+                                          children: children,
+                                        ),
+                                      ),
+                                if (state.hasMore)
+                                  TextButton(
+                                    onPressed: () => catalog.loadPage(reset: false),
+                                    child: Text(t.t('load_more')),
+                                  ),
+                                if (children.isEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 32),
+                                    child: Text(
+                                      t.t('empty_catalog'),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
-                            if (state.hasMore)
-                              TextButton(
-                                onPressed: () => catalog.loadPage(reset: false),
-                                child: Text(t.t('load_more')),
-                              ),
-                            if (children.isEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 32),
-                                child: Text(
-                                  t.t('empty_catalog'),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    },
                   );
                 },
               ),

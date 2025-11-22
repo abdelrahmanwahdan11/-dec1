@@ -4,6 +4,7 @@ import 'package:iconly/iconly.dart';
 import '../../app.dart';
 import '../../data/mock_plants.dart';
 import '../../localization/app_localizations.dart';
+import '../../models/plant.dart';
 import '../../widgets/plant_card.dart';
 import '../../widgets/primary_button.dart';
 
@@ -92,29 +93,42 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 16),
           Text(t.t('featured'), style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
-          SizedBox(
-            height: 320,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: mockPlants.length,
-              itemBuilder: (context, index) {
-                final plant = mockPlants[index];
-                final compared = app.compareController.compared.value
-                    .any((element) => element.id == plant.id);
-                return PlantCard(
-                  plant: plant,
-                  compared: compared,
-                  onAddToCart: () {
-                    app.cartController.addToCart(plant);
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text('${plant.nameEn} added')));
+          ValueListenableBuilder<Set<String>>(
+            valueListenable: app.favoritesController.favorites,
+            builder: (context, favorites, _) {
+              return SizedBox(
+                height: 320,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: mockPlants.length,
+                  itemBuilder: (context, index) {
+                    final plant = mockPlants[index];
+                    final compared = app.compareController.compared.value
+                        .any((element) => element.id == plant.id);
+                    return PlantCard(
+                      plant: plant,
+                      compared: compared,
+                      favorite: favorites.contains(plant.id),
+                      onFavoriteToggle: () async {
+                        await app.favoritesController.toggle(plant);
+                        final added = app.favoritesController.isFavorite(plant.id);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(added ? t.t('added_favorite') : t.t('removed_favorite'))),
+                        );
+                      },
+                      onAddToCart: () {
+                        app.cartController.addToCart(plant);
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text('${plant.nameEn} added')));
+                      },
+                      onCompare: () => app.compareController.toggle(plant),
+                      onAiInfo: () => _showAiInfo(context, plant),
+                      onTap: () => Navigator.pushNamed(context, '/plant/${plant.id}'),
+                    );
                   },
-                  onCompare: () => app.compareController.toggle(plant),
-                  onAiInfo: () => _showAiInfo(context, plant),
-                  onTap: () => Navigator.pushNamed(context, '/plant/${plant.id}'),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),

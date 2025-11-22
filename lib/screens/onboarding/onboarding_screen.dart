@@ -14,28 +14,16 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final pages = [
-    (
-      'https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=1200&q=80',
-      'Fresh greenery',
-      'Discover curated indoor & outdoor plants.',
-    ),
-    (
-      'https://images.unsplash.com/photo-1483794344563-d27a8d18014e?auto=format&fit=crop&w=1200&q=80',
-      'Smart care tips',
-      'Know the right light, water, and humidity.',
-    ),
-    (
-      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80',
-      'Style your home',
-      'Build a calming corner with plants.',
-    ),
+  final _images = const [
+    'https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1483794344563-d27a8d18014e?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80',
   ];
 
   @override
   void initState() {
     super.initState();
-    widget.onboardingController.startAutoSlide(pages.length);
+    widget.onboardingController.startAutoSlide(_images.length);
   }
 
   @override
@@ -47,6 +35,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
+    final pages = [
+      (t.t('onboard_title_1'), t.t('onboard_desc_1')),
+      (t.t('onboard_title_2'), t.t('onboard_desc_2')),
+      (t.t('onboard_title_3'), t.t('onboard_desc_3')),
+    ];
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -69,16 +62,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Expanded(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(32),
-                          child: Image.network(page.$1, fit: BoxFit.cover)
+                          child: Image.network(_images[index], fit: BoxFit.cover)
                               .animate()
                               .fadeIn(duration: 400.ms)
                               .slide(begin: const Offset(0, 0.04)),
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Text(page.$2, style: Theme.of(context).textTheme.headlineSmall),
+                      Text(page.$1, style: Theme.of(context).textTheme.headlineSmall),
                       const SizedBox(height: 12),
-                      Text(page.$3, textAlign: TextAlign.center),
+                      Text(page.$2, textAlign: TextAlign.center),
                       const SizedBox(height: 20),
                     ],
                   ),

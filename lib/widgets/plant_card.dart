@@ -10,6 +10,8 @@ class PlantCard extends StatelessWidget {
   final VoidCallback? onCompare;
   final VoidCallback? onAiInfo;
   final bool compared;
+  final bool favorite;
+  final VoidCallback? onFavoriteToggle;
 
   const PlantCard({
     super.key,
@@ -19,6 +21,8 @@ class PlantCard extends StatelessWidget {
     this.onCompare,
     this.onAiInfo,
     this.compared = false,
+    this.favorite = false,
+    this.onFavoriteToggle,
   });
 
   @override
@@ -49,7 +53,26 @@ class PlantCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.network(plant.imageUrl, fit: BoxFit.cover),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: Image.network(plant.imageUrl, fit: BoxFit.cover),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Material(
+                          color: Colors.black.withOpacity(0.4),
+                          borderRadius: BorderRadius.circular(18),
+                          child: IconButton(
+                            onPressed: onFavoriteToggle,
+                            icon: Icon(favorite ? IconlyBold.heart : IconlyLight.heart),
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

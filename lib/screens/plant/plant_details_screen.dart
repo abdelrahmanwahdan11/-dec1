@@ -26,6 +26,20 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
     final t = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context);
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          ValueListenableBuilder<Set<String>>(
+            valueListenable: app.favoritesController.favorites,
+            builder: (context, favorites, _) {
+              final isFav = favorites.contains(plant.id);
+              return IconButton(
+                onPressed: () => app.favoritesController.toggle(plant),
+                icon: Icon(isFav ? IconlyBold.heart : IconlyLight.heart),
+              );
+            },
+          )
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openAiInfo(context, plant),
         child: const Icon(IconlyLight.info_circle),
@@ -51,18 +65,18 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
                         ),
                         if (flipped)
                           Positioned.fill(
-                            child: Container(
-                              color: Colors.black.withOpacity(0.55),
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(24.0),
-                                  child: Text(
-                                    plant.longDescriptionEn,
-                                    style:
-                                        const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                                  ),
-                                ),
+                        child: Container(
+                          color: Colors.black.withOpacity(0.55),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Text(
+                                plant.localizedLongDescription(locale),
+                                style:
+                                    const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
                               ),
+                            ),
+                          ),
                             ),
                           ),
                       ],
