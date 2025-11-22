@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:iconly/iconly.dart';
 import '../../app.dart';
 import '../../data/mock_plants.dart';
+import '../../data/mock_challenges.dart';
 import '../../localization/app_localizations.dart';
 import '../../models/plant.dart';
 import '../../models/app_notification.dart';
@@ -119,6 +120,10 @@ class HomeTab extends StatelessWidget {
           _galleryPeek(context, app, t, locale.languageCode),
           const SizedBox(height: 16),
           _insightsStrip(context, app, t),
+          const SizedBox(height: 16),
+          _quizStrip(context, app, t),
+          const SizedBox(height: 16),
+          _challengesStrip(context, app, t),
           const SizedBox(height: 16),
           _gardenPeek(context, app, locale.languageCode, t),
           const SizedBox(height: 16),
@@ -695,6 +700,125 @@ class HomeTab extends StatelessWidget {
           ],
         ),
       ).animate().slide(begin: const Offset(0, 0.04)).fadeIn(),
+    );
+  }
+
+  Widget _quizStrip(BuildContext context, AppScope app, AppLocalizations t) {
+    final total = app.quizController.questions.length;
+    return ValueListenableBuilder(
+      valueListenable: app.quizController.state,
+      builder: (context, state, _) {
+        final answered = state.answers.length;
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, '/quiz'),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(t.t('quizzes_title'),
+                          style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 4),
+                      Text(t.t('quiz_subtitle'),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: Theme.of(context).hintColor)),
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: total == 0 ? 0 : answered / total,
+                        minHeight: 8,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.surfaceVariant,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  children: [
+                    Chip(
+                      label: Text(t.t('quiz_chip')),
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    ),
+                    const SizedBox(height: 6),
+                    Text('$answered/$total',
+                        style: Theme.of(context).textTheme.titleMedium),
+                  ],
+                ),
+              ],
+            ),
+          ).animate().fadeIn().slideX(begin: -0.06),
+        );
+      },
+    );
+  }
+
+  Widget _challengesStrip(
+      BuildContext context, AppScope app, AppLocalizations t) {
+    return ValueListenableBuilder(
+      valueListenable: app.challengesController.state,
+      builder: (context, state, _) {
+        final completed = mockChallenges
+            .where((c) => state.isComplete(c.id, c.target))
+            .length;
+        final total = mockChallenges.length;
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, '/challenges'),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.4),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(t.t('challenges'),
+                          style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 4),
+                      Text(
+                        t.t('challenge_subtitle'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(color: Theme.of(context).hintColor),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text('$completed/$total'),
+                    ),
+                    const SizedBox(height: 6),
+                    const Icon(Icons.bolt_rounded),
+                  ],
+                )
+              ],
+            ),
+          ).animate().fadeIn().slideX(begin: 0.06),
+        );
+      },
     );
   }
 

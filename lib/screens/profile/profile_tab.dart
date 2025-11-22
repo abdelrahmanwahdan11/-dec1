@@ -177,6 +177,18 @@ class ProfileTab extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, '/insights'),
           ),
           ListTile(
+            leading: const Icon(Icons.quiz_outlined),
+            title: Text(t.t('quizzes_title')),
+            subtitle: Text(t.t('quiz_subtitle')),
+            onTap: () => Navigator.pushNamed(context, '/quiz'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.bolt_outlined),
+            title: Text(t.t('challenges')),
+            subtitle: Text(t.t('challenge_subtitle')),
+            onTap: () => Navigator.pushNamed(context, '/challenges'),
+          ),
+          ListTile(
             leading: const Icon(IconlyLight.bag),
             title: Text(t.t('bundles')),
             onTap: () => Navigator.pushNamed(context, '/bundles'),
