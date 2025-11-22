@@ -55,6 +55,7 @@ import 'screens/diagnostics/diagnostics_screen.dart';
 import 'screens/gifting/gifting_screen.dart';
 import 'screens/journal/journal_screen.dart';
 import 'screens/updates/updates_screen.dart';
+import 'screens/insights/insights_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -751,11 +752,11 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                             changelogController: changelogController,
                             child: const JournalScreen(),
                           ));
-                case '/updates':
-                  return MaterialPageRoute(
-                      builder: (_) => AppScope(
-                            authController: authController,
-                            themeController: themeController,
+                  case '/updates':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
                             localeController: localeController,
                             cartController: cartController,
                             compareController: compareController,
@@ -770,11 +771,35 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                             promoController: promoController,
                             referralController: referralController,
                             diagnosticsController: diagnosticsController,
-                            giftController: giftController,
-                            journalController: journalController,
-                            changelogController: changelogController,
-                            child: const UpdatesScreen(),
-                          ));
+                              giftController: giftController,
+                              journalController: journalController,
+                              changelogController: changelogController,
+                              child: const UpdatesScreen(),
+                            ));
+                  case '/insights':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              promoController: promoController,
+                              referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
+                              journalController: journalController,
+                              changelogController: changelogController,
+                              child: const InsightsScreen(),
+                            ));
                   default:
                     if (name != null && name.startsWith('/plant/')) {
                       final id = name.split('/').last;

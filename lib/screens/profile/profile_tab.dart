@@ -165,6 +165,12 @@ class ProfileTab extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, '/updates'),
           ),
           ListTile(
+            leading: const Icon(IconlyLight.chart),
+            title: Text(t.t('insights')),
+            subtitle: Text(t.t('insights_entry')),
+            onTap: () => Navigator.pushNamed(context, '/insights'),
+          ),
+          ListTile(
             leading: const Icon(IconlyLight.bag),
             title: Text(t.t('bundles')),
             onTap: () => Navigator.pushNamed(context, '/bundles'),

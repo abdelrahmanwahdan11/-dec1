@@ -110,6 +110,8 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 16),
           _updatesBanner(context, app, t),
           const SizedBox(height: 16),
+          _insightsStrip(context, app, t),
+          const SizedBox(height: 16),
           _journalTeaser(context, app, locale, t),
           const SizedBox(height: 16),
           _recentlyViewed(context, app, locale, t),
@@ -469,6 +471,59 @@ class HomeTab extends StatelessWidget {
           ).animate().fadeIn(duration: 240.ms).slideX(begin: -0.03),
         );
       },
+    );
+  }
+
+  Widget _insightsStrip(BuildContext context, AppScope app, AppLocalizations t) {
+    final tasks = app.careController.tasks.value;
+    final completed = tasks.where((task) => task.completed).length;
+    final total = tasks.length;
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, '/insights'),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(t.t('insights'), style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 6),
+                  Text(t.t('insights_entry'), style: Theme.of(context).textTheme.bodySmall),
+                  const SizedBox(height: 8),
+                  LinearProgressIndicator(
+                    value: total == 0 ? 0 : completed / total,
+                    minHeight: 8,
+                    color: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(IconlyBold.chart),
+                  const SizedBox(height: 6),
+                  Text('$completed/$total'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ).animate().slide(begin: const Offset(0, 0.04)).fadeIn(),
     );
   }
 
