@@ -113,6 +113,8 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 16),
           _savingsStrip(context, app, t),
           const SizedBox(height: 16),
+          _membershipStrip(context, app, t),
+          const SizedBox(height: 16),
           _updatesBanner(context, app, t),
           const SizedBox(height: 16),
           _eventsPeek(context, app, t, locale.languageCode),
@@ -428,6 +430,59 @@ class HomeTab extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _membershipStrip(BuildContext context, AppScope app, AppLocalizations t) {
+    final locale = Localizations.localeOf(context);
+    return ValueListenableBuilder(
+      valueListenable: app.membershipController.status,
+      builder: (context, status, _) {
+        final progress = (status.points / status.nextTierAt).clamp(0.0, 1.0);
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, '/membership'),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(colors: [
+                Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                Theme.of(context).colorScheme.primary.withOpacity(0.28),
+              ]),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(t.t('membership'), style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 4),
+                      Text(t.t('membership_hint'), style: Theme.of(context).textTheme.bodySmall),
+                      const SizedBox(height: 8),
+                      Text('${t.t('current_tier')}: ${status.tier}',
+                          style: Theme.of(context).textTheme.titleLarge),
+                      Text('${t.t('points')}: ${status.points} / ${status.nextTierAt}'),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          minHeight: 8,
+                          color: Theme.of(context).colorScheme.primary,
+                          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.16),
+                        ),
+                      ).animate().fadeIn().slideX(begin: locale.languageCode == 'ar' ? 0.06 : -0.06),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Icon(Icons.workspace_premium_outlined, size: 48),
+              ],
+            ),
+          ).animate().scale(begin: const Offset(0.98, 0.98)).fadeIn(),
+        );
+      },
     );
   }
 

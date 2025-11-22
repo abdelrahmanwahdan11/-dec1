@@ -78,6 +78,18 @@ class ProfileTab extends StatelessWidget {
             ),
           ),
           ListTile(
+            leading: const Icon(Icons.workspace_premium_outlined),
+            title: Text(t.t('membership')),
+            subtitle: Text(t.t('membership_hint')),
+            onTap: () => Navigator.pushNamed(context, '/membership'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.tune_rounded),
+            title: Text(t.t('accessibility')),
+            subtitle: Text(t.t('accessibility_hint')),
+            onTap: () => Navigator.pushNamed(context, '/accessibility'),
+          ),
+          ListTile(
             leading: const Icon(IconlyLight.chart),
             title: Text(t.t('compare')),
             onTap: () => Navigator.pushNamed(context, '/compare'),

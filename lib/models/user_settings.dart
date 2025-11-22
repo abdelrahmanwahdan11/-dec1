@@ -9,6 +9,9 @@ class UserSettings {
   final String localeCode;
   final bool seenOnboarding;
   final bool isGuest;
+  final double textScale;
+  final bool reduceMotion;
+  final bool highContrast;
 
   const UserSettings({
     required this.themeMode,
@@ -16,6 +19,9 @@ class UserSettings {
     required this.localeCode,
     required this.seenOnboarding,
     required this.isGuest,
+    this.textScale = 1.0,
+    this.reduceMotion = false,
+    this.highContrast = false,
   });
 
   UserSettings copyWith({
@@ -24,6 +30,9 @@ class UserSettings {
     String? localeCode,
     bool? seenOnboarding,
     bool? isGuest,
+    double? textScale,
+    bool? reduceMotion,
+    bool? highContrast,
   }) {
     return UserSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -31,6 +40,9 @@ class UserSettings {
       localeCode: localeCode ?? this.localeCode,
       seenOnboarding: seenOnboarding ?? this.seenOnboarding,
       isGuest: isGuest ?? this.isGuest,
+      textScale: textScale ?? this.textScale,
+      reduceMotion: reduceMotion ?? this.reduceMotion,
+      highContrast: highContrast ?? this.highContrast,
     );
   }
 }
