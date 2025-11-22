@@ -1,0 +1,216 @@
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:iconly/iconly.dart';
+import '../../app.dart';
+import '../../data/mock_plants.dart';
+import '../../localization/app_localizations.dart';
+import '../../models/plant.dart';
+import '../../widgets/primary_button.dart';
+
+class PlantDetailsScreen extends StatefulWidget {
+  final String plantId;
+  const PlantDetailsScreen({super.key, required this.plantId});
+
+  @override
+  State<PlantDetailsScreen> createState() => _PlantDetailsScreenState();
+}
+
+class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
+  bool flipped = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final app = AppScope.of(context);
+      final plant = app.catalogController.findById(widget.plantId);
+      if (plant != null) {
+        app.recentController.add(plant.id);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final app = AppScope.of(context);
+    final plant = app.catalogController.findById(widget.plantId) ?? mockPlants.first;
+    final t = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context);
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          ValueListenableBuilder<Set<String>>(
+            valueListenable: app.favoritesController.favorites,
+            builder: (context, favorites, _) {
+              final isFav = favorites.contains(plant.id);
+              return IconButton(
+                onPressed: () => app.favoritesController.toggle(plant),
+                icon: Icon(isFav ? IconlyBold.heart : IconlyLight.heart),
+              );
+            },
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _openAiInfo(context, plant),
+        child: const Icon(IconlyLight.info_circle),
+      ),
+      body: SafeArea(
+        child: ListView(
+          children: [
+            GestureDetector(
+              onTap: () => setState(() => flipped = !flipped),
+              child: Hero(
+                tag: 'plant-${plant.id}',
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateY(flipped ? pi : 0),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.network(plant.imageUrl, fit: BoxFit.cover),
+                        ),
+                        if (flipped)
+                          Positioned.fill(
+                            child: Container(
+                              color: Colors.black.withOpacity(0.55),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Text(
+                                    plant.localizedLongDescription(locale),
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(plant.localizedName(locale),
+                      style: Theme.of(context).textTheme.headlineSmall),
+                  const SizedBox(height: 8),
+                  Text('\$${plant.price.toStringAsFixed(2)}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.copyWith(color: Theme.of(context).colorScheme.primary)),
+                  const SizedBox(height: 12),
+                  Text(plant.localizedShortDescription(locale)),
+                  const SizedBox(height: 12),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      children: [
+                        _propRow(IconlyLight.arrow_down_circle, t.t('table_height'), plant.heightRange),
+                        _propRow(IconlyLight.sun, t.t('table_temperature'), plant.temperatureRange),
+                        _propRow(IconlyLight.activity, t.t('table_humidity'), plant.humidity),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: PrimaryButton(
+                          label: t.t('add_to_cart'),
+                          onPressed: () => app.cartController.addToCart(plant),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(IconlyBold.show),
+                        onPressed: () => app.compareController.toggle(plant),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  ValueListenableBuilder(
+                    valueListenable: app.gardenController.garden,
+                    builder: (context, garden, _) {
+                      final exists = garden.any((p) => p.plantId == plant.id);
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: FilledButton.icon(
+                              onPressed: exists
+                                  ? () => app.gardenController.markWatered(plant.id)
+                                  : () => app.gardenController.addFromPlant(plant),
+                              icon: Icon(exists ? Icons.check_circle : Icons.local_florist_outlined),
+                              label: Text(exists ? t.t('mark_watered') : t.t('add_to_garden')),
+                            ),
+                          ),
+                          if (exists) ...[
+                            const SizedBox(width: 8),
+                            OutlinedButton.icon(
+                              onPressed: () => Navigator.pushNamed(context, '/garden'),
+                              icon: const Icon(Icons.launch),
+                              label: Text(t.t('garden')),
+                            ),
+                          ]
+                        ],
+                      );
+                    },
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _propRow(IconData icon, String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Icon(icon),
+          const SizedBox(width: 8),
+          Text(title),
+          const Spacer(),
+          Text(value),
+        ],
+      ),
+    );
+  }
+
+  void _openAiInfo(BuildContext context, Plant plant) {
+    final t = AppLocalizations.of(context);
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('${t.t('ai_info')} - ${plant.nameEn}',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text(t.t('ai_mock_body')),
+          ],
+        ),
+      ),
+    );
+  }
+}

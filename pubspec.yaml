@@ -1,0 +1,27 @@
+name: plants_fresher
+description: A plants e-commerce experience with theming, localization, and rich UI.
+publish_to: 'none'
+version: 1.0.0+1
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  google_fonts: ^6.2.1
+  shared_preferences: ^2.3.2
+  iconly: ^1.0.1
+  flutter_animate: ^4.5.0
+  firebase_core: ^2.32.0
+  firebase_auth: ^4.17.9
+  cloud_firestore: ^4.15.8
+  firebase_storage: ^11.6.10
+  firebase_messaging: ^14.9.2
+  firebase_analytics: ^10.10.6
+  firebase_crashlytics: ^3.5.7
+  flutter_local_notifications: ^17.2.2
+
+flutter:
+  uses-material-design: true
