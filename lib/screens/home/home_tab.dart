@@ -105,6 +105,8 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 16),
           _quickActions(context, app, t),
           const SizedBox(height: 16),
+          _savingsStrip(context, app, t),
+          const SizedBox(height: 16),
           _recentlyViewed(context, app, locale, t),
           const SizedBox(height: 16),
           _careStrip(context, app),
@@ -292,6 +294,90 @@ class HomeTab extends StatelessWidget {
             label: Text(t.t('calendar_shortcut')),
           ).animate().fadeIn(duration: 200.ms),
         )
+      ],
+    );
+  }
+
+  Widget _savingsStrip(BuildContext context, AppScope app, AppLocalizations t) {
+    final locale = Localizations.localeOf(context);
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/coupons'),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                gradient: LinearGradient(colors: [
+                  Theme.of(context).colorScheme.primary.withOpacity(0.18),
+                  Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                ]),
+              ),
+              child: ValueListenableBuilder(
+                valueListenable: app.promoController.appliedCoupon,
+                builder: (context, coupon, _) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(t.t('coupon_center'), style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 4),
+                      Text(
+                        coupon == null
+                            ? t.t('browse_coupons')
+                            : coupon.localizedTitle(locale),
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pushNamed(context, '/coupons'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text(coupon?.percentageLabel() ?? t.t('apply_now')),
+                      ),
+                    ],
+                  ).animate().fadeIn().slideX(begin: -0.04);
+                },
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/referrals'),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.45),
+              ),
+              child: ValueListenableBuilder<int>(
+                valueListenable: app.referralController.rewards,
+                builder: (context, rewards, _) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(t.t('referrals'), style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 4),
+                      Text(t.t('invite_hint'), style: Theme.of(context).textTheme.bodySmall),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(IconlyBold.star, color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 6),
+                          Text('$rewards ${t.t('pts')}'),
+                        ],
+                      ),
+                    ],
+                  ).animate().fadeIn().slideX(begin: 0.04);
+                },
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

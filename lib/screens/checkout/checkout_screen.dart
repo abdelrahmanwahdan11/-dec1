@@ -23,6 +23,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     final app = AppScope.of(context);
     final t = AppLocalizations.of(context);
+    final subtotal = app.cartController.subtotal;
+    final discount = app.promoController.discountFor(subtotal);
+    final total = subtotal + app.cartController.deliveryFee - discount;
     return Scaffold(
       appBar: AppBar(title: Text(t.t('checkout'))),
       body: SingleChildScrollView(
@@ -134,10 +137,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
                 child: Column(
                   children: [
-                    _totalRow(t.t('subtotal'), app.cartController.subtotal, context),
+                    _totalRow(t.t('subtotal'), subtotal, context),
+                    if (discount > 0)
+                      _totalRow(t.t('discount'), -discount, context,
+                          color: Theme.of(context).colorScheme.primary),
                     _totalRow(t.t('delivery_fee'), app.cartController.deliveryFee, context),
                     const Divider(),
-                    _totalRow(t.t('total'), app.cartController.total, context, bold: true),
+                    _totalRow(t.t('total'), total, context, bold: true),
                   ],
                 ),
               ),
@@ -157,7 +163,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _totalRow(String label, double value, BuildContext context, {bool bold = false}) {
+  Widget _totalRow(String label, double value, BuildContext context,
+      {bool bold = false, Color? color}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -167,7 +174,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Text('\$${value.toStringAsFixed(2)}',
               style: TextStyle(
                   fontWeight: bold ? FontWeight.w700 : null,
-                  color: bold ? Theme.of(context).colorScheme.primary : null)),
+                  color: color ?? (bold ? Theme.of(context).colorScheme.primary : null))),
         ],
       ),
     );
