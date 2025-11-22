@@ -49,7 +49,9 @@ class CareScheduleScreen extends StatelessWidget {
             children: [
               _heroCard(context, t),
               const SizedBox(height: 16),
-              ...tasks.map((task) => _taskTile(context, task, controller, locale)).toList(),
+              ...tasks
+                  .map((task) => _taskTile(context, app, task, controller, locale))
+                  .toList(),
             ],
           );
         },
@@ -95,7 +97,8 @@ class CareScheduleScreen extends StatelessWidget {
     ).animate().fadeIn(duration: 350.ms).slide(begin: const Offset(0, 0.1));
   }
 
-  Widget _taskTile(BuildContext context, PlantCareTask task, CareController controller, Locale locale) {
+  Widget _taskTile(
+      BuildContext context, AppScope app, PlantCareTask task, CareController controller, Locale locale) {
     final t = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -116,7 +119,12 @@ class CareScheduleScreen extends StatelessWidget {
           scale: task.completed ? 1.05 : 1,
           child: Checkbox(
             value: task.completed,
-            onChanged: (_) => controller.toggleComplete(task.id),
+            onChanged: (_) async {
+              await controller.toggleComplete(task.id);
+              if (!task.completed) {
+                await app.rewardsController.addPoints(12);
+              }
+            },
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
         ),

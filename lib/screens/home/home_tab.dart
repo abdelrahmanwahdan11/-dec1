@@ -103,6 +103,8 @@ class HomeTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
+          _quickActions(context, app, t),
+          const SizedBox(height: 16),
           _careStrip(context, app),
           const SizedBox(height: 16),
           Text(t.t('categories'), style: Theme.of(context).textTheme.titleMedium),
@@ -189,6 +191,73 @@ class HomeTab extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _quickActions(BuildContext context, AppScope app, AppLocalizations t) {
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/guides'),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).colorScheme.primary.withOpacity(0.18),
+                    Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(IconlyBold.paper, color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(height: 8),
+                  Text(t.t('explore_guides'), style: Theme.of(context).textTheme.titleMedium),
+                  Text(t.t('micro_lessons'), style: Theme.of(context).textTheme.bodySmall),
+                ],
+              ),
+            ).animate().slide(begin: const Offset(0, 0.08)).fadeIn(duration: 220.ms),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/rewards'),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(IconlyBold.star, color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(width: 6),
+                      ValueListenableBuilder<int>(
+                        valueListenable: app.rewardsController.points,
+                        builder: (context, points, _) => Text('$points ${t.t('pts')}',
+                            style: Theme.of(context).textTheme.bodySmall),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(t.t('view_rewards'), style: Theme.of(context).textTheme.titleMedium),
+                  Text(t.t('reward_hint'), style: Theme.of(context).textTheme.bodySmall),
+                ],
+              ),
+            ).animate().slide(begin: const Offset(0, 0.08)).fadeIn(duration: 220.ms),
+          ),
+        ),
+      ],
     );
   }
 
