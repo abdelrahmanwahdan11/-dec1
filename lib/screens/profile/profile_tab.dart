@@ -88,6 +88,12 @@ class ProfileTab extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, '/favorites'),
           ),
           ListTile(
+            leading: const Icon(Icons.local_florist_outlined),
+            title: Text(t.t('garden')),
+            subtitle: Text(t.t('garden_overview')),
+            onTap: () => Navigator.pushNamed(context, '/garden'),
+          ),
+          ListTile(
             leading: const Icon(IconlyLight.paper),
             title: Text(t.t('guides')),
             onTap: () => Navigator.pushNamed(context, '/guides'),

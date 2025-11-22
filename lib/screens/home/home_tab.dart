@@ -10,6 +10,8 @@ import '../../models/plant_care_task.dart';
 import '../../models/journal_entry.dart';
 import '../../models/plant_event.dart';
 import '../../models/gallery_item.dart';
+import '../../models/owned_plant.dart';
+import '../../theme/app_theme.dart';
 import '../../widgets/plant_card.dart';
 import '../../widgets/primary_button.dart';
 
@@ -117,6 +119,8 @@ class HomeTab extends StatelessWidget {
           _galleryPeek(context, app, t, locale.languageCode),
           const SizedBox(height: 16),
           _insightsStrip(context, app, t),
+          const SizedBox(height: 16),
+          _gardenPeek(context, app, locale.languageCode, t),
           const SizedBox(height: 16),
           _journalTeaser(context, app, locale, t),
           const SizedBox(height: 16),
@@ -316,15 +320,24 @@ class HomeTab extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TextButton.icon(
-            onPressed: () => Navigator.pushNamed(context, '/care/calendar'),
-            icon: const Icon(IconlyLight.calendar),
-            label: Text(t.t('calendar_shortcut')),
-          ).animate().fadeIn(duration: 200.ms),
-        )
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            card(
+              onTap: () => Navigator.pushNamed(context, '/garden'),
+              icon: Icons.local_florist_outlined,
+              title: t.t('garden'),
+              subtitle: t.t('garden_overview'),
+            ),
+            const SizedBox(width: 10),
+            card(
+              onTap: () => Navigator.pushNamed(context, '/care/calendar'),
+              icon: IconlyBold.calendar,
+              title: t.t('care_calendar'),
+              subtitle: t.t('calendar_shortcut'),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -685,6 +698,105 @@ class HomeTab extends StatelessWidget {
     );
   }
 
+  Widget _gardenPeek(BuildContext context, AppScope app, String localeCode, AppLocalizations t) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        color: theme.colorScheme.surface,
+        boxShadow: AppThemeBuilder.cardShadow(theme),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(t.t('garden'), style: Theme.of(context).textTheme.titleMedium),
+              const Spacer(),
+              TextButton(
+                onPressed: () => Navigator.pushNamed(context, '/garden'),
+                child: Text(t.t('view_all')),
+              )
+            ],
+          ),
+          const SizedBox(height: 8),
+          ValueListenableBuilder<List<OwnedPlant>>(
+            valueListenable: app.gardenController.garden,
+            builder: (context, garden, _) {
+              if (garden.isEmpty) {
+                return Text(t.t('empty_garden_body'), style: theme.textTheme.bodyMedium);
+              }
+              return SizedBox(
+                height: 170,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final plant = garden[index];
+                    return Container(
+                      width: 200,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: theme.colorScheme.surfaceVariant.withOpacity(0.6),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.network(plant.imageUrl,
+                                        width: 70, height: 70, fit: BoxFit.cover)
+                                    .animate()
+                                    .scale(duration: 220.ms, curve: Curves.easeOut),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(plant.displayName(localeCode),
+                                        style: theme.textTheme.titleSmall,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis),
+                                    const SizedBox(height: 6),
+                                    _healthPill(context, plant.health, t),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Text('${t.t('next_watering')}: ${_relativeWatering(plant.nextWatering, t)}',
+                              style: theme.textTheme.bodySmall),
+                          Text('${t.t('last_watered')}: ${_relativeWatering(plant.lastWatered, t)}',
+                              style: theme.textTheme.bodySmall),
+                          const Spacer(),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton.icon(
+                              onPressed: () => app.gardenController.markWatered(plant.plantId),
+                              icon: const Icon(Icons.water_drop_outlined),
+                              label: Text(t.t('mark_watered')),
+                            ),
+                          )
+                        ],
+                      ),
+                    ).animate(delay: (index * 50).ms).fadeIn().slideX(begin: 0.05);
+                  },
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemCount: garden.length,
+                ),
+              );
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _journalTeaser(
       BuildContext context, AppScope app, Locale locale, AppLocalizations t) {
     return ValueListenableBuilder<List<JournalEntry>>(
@@ -792,6 +904,49 @@ class HomeTab extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget _healthPill(BuildContext context, PlantHealth health, AppLocalizations t) {
+    Color color;
+    String label;
+    switch (health) {
+      case PlantHealth.thriving:
+        color = Colors.green;
+        label = t.t('thriving');
+        break;
+      case PlantHealth.steady:
+        color = Colors.orange;
+        label = t.t('steady');
+        break;
+      case PlantHealth.struggling:
+        color = Colors.red;
+        label = t.t('needs_attention');
+        break;
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.favorite, color: color, size: 14),
+          const SizedBox(width: 6),
+          Text(label, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: color)),
+        ],
+      ),
+    );
+  }
+
+  String _relativeWatering(DateTime date, AppLocalizations t) {
+    final now = DateTime.now();
+    final diff = date.difference(now).inDays;
+    if (diff == 0) return t.t('today');
+    if (diff == 1) return t.t('tomorrow');
+    if (diff == -1) return t.t('yesterday');
+    return diff > 0 ? '${diff}d' : '${diff.abs()}d ago';
   }
 
   Widget _categoryChip(BuildContext context, String label, IconData icon, VoidCallback onTap) {

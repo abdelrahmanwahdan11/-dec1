@@ -143,6 +143,34 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 12),
+                  ValueListenableBuilder(
+                    valueListenable: app.gardenController.garden,
+                    builder: (context, garden, _) {
+                      final exists = garden.any((p) => p.plantId == plant.id);
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: FilledButton.icon(
+                              onPressed: exists
+                                  ? () => app.gardenController.markWatered(plant.id)
+                                  : () => app.gardenController.addFromPlant(plant),
+                              icon: Icon(exists ? Icons.check_circle : Icons.local_florist_outlined),
+                              label: Text(exists ? t.t('mark_watered') : t.t('add_to_garden')),
+                            ),
+                          ),
+                          if (exists) ...[
+                            const SizedBox(width: 8),
+                            OutlinedButton.icon(
+                              onPressed: () => Navigator.pushNamed(context, '/garden'),
+                              icon: const Icon(Icons.launch),
+                              label: Text(t.t('garden')),
+                            ),
+                          ]
+                        ],
+                      );
+                    },
+                  )
                 ],
               ),
             ),
