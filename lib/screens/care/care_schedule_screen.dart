@@ -48,6 +48,11 @@ class CareScheduleScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             children: [
               _heroCard(context, t),
+              const SizedBox(height: 10),
+              PrimaryButton(
+                label: t.t('open_calendar'),
+                onPressed: () => Navigator.pushNamed(context, '/care/calendar'),
+              ),
               const SizedBox(height: 16),
               ...tasks
                   .map((task) => _taskTile(context, app, task, controller, locale))

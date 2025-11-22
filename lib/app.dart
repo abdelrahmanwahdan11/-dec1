@@ -33,6 +33,7 @@ import 'screens/orders/orders_screen.dart';
 import 'screens/about/about_screen.dart';
 import 'screens/favorites/favorites_screen.dart';
 import 'screens/care/care_schedule_screen.dart';
+import 'screens/care/care_calendar_screen.dart';
 import 'screens/notifications/notification_center_screen.dart';
 import 'screens/guides/guides_screen.dart';
 import 'screens/rewards/rewards_screen.dart';
@@ -40,6 +41,8 @@ import 'screens/orders/tracking_screen.dart';
 import 'screens/support/support_screen.dart';
 import 'screens/profile/address_book_screen.dart';
 import 'screens/profile/recently_viewed_screen.dart';
+import 'screens/bundles/bundles_screen.dart';
+import 'screens/inspiration/inspiration_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -354,6 +357,24 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               child: const CareScheduleScreen(),
                             ));
+                  case '/care/calendar':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              child: const CareCalendarScreen(),
+                            ));
                   case '/notifications':
                     return MaterialPageRoute(
                         builder: (_) => AppScope(
@@ -407,6 +428,42 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               recentController: recentController,
                               catalogController: catalogController,
                               child: const RewardsScreen(),
+                            ));
+                  case '/bundles':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              child: const BundlesScreen(),
+                            ));
+                  case '/inspiration':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              child: const InspirationScreen(),
                             ));
                   case '/addresses':
                     return MaterialPageRoute(

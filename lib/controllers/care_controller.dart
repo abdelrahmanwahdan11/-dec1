@@ -15,6 +15,8 @@ class CareController extends ChangeNotifier {
   final Set<String> _completedIds = {};
   final Map<String, DateTime> _dueOverrides = {};
 
+  DateTime _strip(DateTime date) => DateTime(date.year, date.month, date.day);
+
   Future<void> _load() async {
     _prefs = await SharedPreferences.getInstance();
     _ready = true;
@@ -30,6 +32,13 @@ class CareController extends ChangeNotifier {
         return MapEntry(parts.first, DateTime.fromMillisecondsSinceEpoch(int.parse(parts.last)));
       }));
     _hydrate();
+  }
+
+  List<PlantCareTask> tasksForDay(DateTime day) {
+    final normalized = _strip(day);
+    return tasks.value
+        .where((t) => _strip(t.dueDate) == normalized)
+        .toList();
   }
 
   void _hydrate() {

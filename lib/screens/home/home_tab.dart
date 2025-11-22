@@ -197,68 +197,101 @@ class HomeTab extends StatelessWidget {
   }
 
   Widget _quickActions(BuildContext context, AppScope app, AppLocalizations t) {
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: () => Navigator.pushNamed(context, '/guides'),
-            child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.primary.withOpacity(0.18),
-                    Theme.of(context).colorScheme.primary.withOpacity(0.08),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(IconlyBold.paper, color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(height: 8),
-                  Text(t.t('explore_guides'), style: Theme.of(context).textTheme.titleMedium),
-                  Text(t.t('micro_lessons'), style: Theme.of(context).textTheme.bodySmall),
-                ],
-              ),
-            ).animate().slide(begin: const Offset(0, 0.08)).fadeIn(duration: 220.ms),
-          ),
+    Widget card({required VoidCallback onTap, required IconData icon, required String title, required String subtitle}) {
+      return Expanded(
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.6),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(height: 8),
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
+          ).animate().slide(begin: const Offset(0, 0.05)).fadeIn(duration: 220.ms),
         ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: GestureDetector(
-            onTap: () => Navigator.pushNamed(context, '/rewards'),
-            child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+      );
+    }
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            card(
+              onTap: () => Navigator.pushNamed(context, '/guides'),
+              icon: IconlyBold.paper,
+              title: t.t('explore_guides'),
+              subtitle: t.t('micro_lessons'),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/rewards'),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(IconlyBold.star, color: Theme.of(context).colorScheme.primary),
-                      const SizedBox(width: 6),
-                      ValueListenableBuilder<int>(
-                        valueListenable: app.rewardsController.points,
-                        builder: (context, points, _) => Text('$points ${t.t('pts')}',
-                            style: Theme.of(context).textTheme.bodySmall),
+                      Row(
+                        children: [
+                          Icon(IconlyBold.star, color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 6),
+                          ValueListenableBuilder<int>(
+                            valueListenable: app.rewardsController.points,
+                            builder: (context, points, _) => Text('$points ${t.t('pts')}',
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 8),
+                      Text(t.t('view_rewards'), style: Theme.of(context).textTheme.titleMedium),
+                      Text(t.t('reward_hint'), style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(t.t('view_rewards'), style: Theme.of(context).textTheme.titleMedium),
-                  Text(t.t('reward_hint'), style: Theme.of(context).textTheme.bodySmall),
-                ],
+                ).animate().slide(begin: const Offset(0, 0.05)).fadeIn(duration: 220.ms),
               ),
-            ).animate().slide(begin: const Offset(0, 0.08)).fadeIn(duration: 220.ms),
-          ),
+            ),
+          ],
         ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            card(
+              onTap: () => Navigator.pushNamed(context, '/bundles'),
+              icon: IconlyBold.bag,
+              title: t.t('shop_bundles'),
+              subtitle: t.t('bundle_subtitle'),
+            ),
+            const SizedBox(width: 10),
+            card(
+              onTap: () => Navigator.pushNamed(context, '/inspiration'),
+              icon: IconlyBold.video,
+              title: t.t('get_inspired'),
+              subtitle: t.t('inspiration_subtitle'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () => Navigator.pushNamed(context, '/care/calendar'),
+            icon: const Icon(IconlyLight.calendar),
+            label: Text(t.t('calendar_shortcut')),
+          ).animate().fadeIn(duration: 200.ms),
+        )
       ],
     );
   }

@@ -103,6 +103,11 @@ class ProfileTab extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, '/care'),
           ),
           ListTile(
+            leading: const Icon(IconlyLight.calendar),
+            title: Text(t.t('care_calendar')),
+            onTap: () => Navigator.pushNamed(context, '/care/calendar'),
+          ),
+          ListTile(
             leading: const Icon(IconlyLight.notification),
             title: Text(t.t('notifications')),
             onTap: () => Navigator.pushNamed(context, '/notifications'),
@@ -122,6 +127,16 @@ class ProfileTab extends StatelessWidget {
             leading: const Icon(IconlyLight.time_circle),
             title: Text(t.t('recently_viewed')),
             onTap: () => Navigator.pushNamed(context, '/recent'),
+          ),
+          ListTile(
+            leading: const Icon(IconlyLight.bag),
+            title: Text(t.t('bundles')),
+            onTap: () => Navigator.pushNamed(context, '/bundles'),
+          ),
+          ListTile(
+            leading: const Icon(IconlyLight.video),
+            title: Text(t.t('inspiration')),
+            onTap: () => Navigator.pushNamed(context, '/inspiration'),
           ),
           ListTile(
             leading: const Icon(IconlyLight.location),
