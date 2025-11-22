@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'cart_item.dart';
 
-enum OrderStatus { processing, shipped, delivered }
+enum OrderStatus { processing, packed, shipped, outForDelivery, delivered }
 
 @immutable
 class MockOrder {

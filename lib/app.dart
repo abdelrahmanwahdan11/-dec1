@@ -15,6 +15,7 @@ import 'controllers/guides_controller.dart';
 import 'controllers/rewards_controller.dart';
 import 'localization/app_localizations.dart';
 import 'models/user_settings.dart';
+import 'data/mock_orders.dart';
 import 'theme/app_theme.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/auth/login_screen.dart';
@@ -33,6 +34,8 @@ import 'screens/care/care_schedule_screen.dart';
 import 'screens/notifications/notification_center_screen.dart';
 import 'screens/guides/guides_screen.dart';
 import 'screens/rewards/rewards_screen.dart';
+import 'screens/orders/tracking_screen.dart';
+import 'screens/support/support_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -209,7 +212,21 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                   case '/success':
                     return MaterialPageRoute(builder: (_) => const SuccessScreen());
                   case '/stores':
-                    return MaterialPageRoute(builder: (_) => const StoresScreen());
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              catalogController: catalogController,
+                              child: const StoresScreen(),
+                            ));
                   case '/orders':
                     return MaterialPageRoute(
                         builder: (_) => AppScope(
@@ -226,6 +243,23 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               catalogController: catalogController,
                               child: const OrdersScreen(),
                             ));
+                  case '/tracking':
+                    final orderId = settingsRoute.arguments as String?;
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              catalogController: catalogController,
+                              child: TrackingScreen(orderId: orderId ?? mockOrders.first.id),
+                            ));
                   case '/about':
                     return MaterialPageRoute(
                         builder: (_) => AppScope(
@@ -241,6 +275,22 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               rewardsController: rewardsController,
                               catalogController: catalogController,
                               child: const AboutScreen(),
+                            ));
+                  case '/support':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              catalogController: catalogController,
+                              child: const SupportScreen(),
                             ));
                   case '/favorites':
                     return MaterialPageRoute(
