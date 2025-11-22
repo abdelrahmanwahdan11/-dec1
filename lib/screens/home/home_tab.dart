@@ -7,6 +7,7 @@ import '../../localization/app_localizations.dart';
 import '../../models/plant.dart';
 import '../../models/app_notification.dart';
 import '../../models/plant_care_task.dart';
+import '../../models/journal_entry.dart';
 import '../../widgets/plant_card.dart';
 import '../../widgets/primary_button.dart';
 
@@ -106,6 +107,10 @@ class HomeTab extends StatelessWidget {
           _quickActions(context, app, t),
           const SizedBox(height: 16),
           _savingsStrip(context, app, t),
+          const SizedBox(height: 16),
+          _updatesBanner(context, app, t),
+          const SizedBox(height: 16),
+          _journalTeaser(context, app, locale, t),
           const SizedBox(height: 16),
           _recentlyViewed(context, app, locale, t),
           const SizedBox(height: 16),
@@ -397,6 +402,132 @@ class HomeTab extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _updatesBanner(BuildContext context, AppScope app, AppLocalizations t) {
+    final locale = Localizations.localeOf(context);
+    return ValueListenableBuilder<DateTime?>(
+      valueListenable: app.changelogController.lastSeenDate,
+      builder: (context, _, __) {
+        final update = app.changelogController.updates.value.first;
+        final unread = app.changelogController.hasUnread;
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/updates');
+            app.changelogController.markAllSeen();
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                  Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                ],
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(t.t('whats_new'), style: Theme.of(context).textTheme.titleMedium),
+                          if (unread)
+                            Container(
+                              margin: const EdgeInsetsDirectional.only(start: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.errorContainer,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(t.t('new'),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(color: Theme.of(context).colorScheme.onErrorContainer)),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(update.localizedTitle(locale.languageCode),
+                          style: Theme.of(context).textTheme.bodyLarge),
+                      const SizedBox(height: 4),
+                      Text(update.localizedDescription(locale.languageCode),
+                          maxLines: 2, overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Icon(Icons.upgrade_outlined, color: Theme.of(context).colorScheme.primary),
+              ],
+            ),
+          ).animate().fadeIn(duration: 240.ms).slideX(begin: -0.03),
+        );
+      },
+    );
+  }
+
+  Widget _journalTeaser(
+      BuildContext context, AppScope app, Locale locale, AppLocalizations t) {
+    return ValueListenableBuilder<List<JournalEntry>>(
+      valueListenable: app.journalController.entries,
+      builder: (context, entries, _) {
+        if (entries.isEmpty) return const SizedBox.shrink();
+        final latest = entries.first;
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, '/journal'),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+            ),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.network(latest.imageUrl, height: 80, width: 80, fit: BoxFit.cover)
+                      .animate()
+                      .fadeIn(duration: 260.ms)
+                      .slide(begin: const Offset(0, 0.03)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(t.t('journal'), style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 4),
+                      Text(latest.localizedTitle(locale.languageCode),
+                          maxLines: 1, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 4),
+                      Text(latest.localizedNote(locale.languageCode),
+                          maxLines: 2, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Chip(
+                            label: Text(t.t(latest.mood)),
+                            backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(t.formatDate(latest.createdAt),
+                              style: Theme.of(context).textTheme.bodySmall),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ).animate().fadeIn(duration: 240.ms).slideX(begin: 0.03),
+        );
+      },
     );
   }
 
