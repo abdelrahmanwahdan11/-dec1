@@ -90,6 +90,12 @@ class ProfileTab extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, '/accessibility'),
           ),
           ListTile(
+            leading: const Icon(Icons.privacy_tip_outlined),
+            title: Text(t.t('privacy_center')),
+            subtitle: Text(t.t('privacy_controls_hint')),
+            onTap: () => Navigator.pushNamed(context, '/privacy'),
+          ),
+          ListTile(
             leading: const Icon(IconlyLight.chart),
             title: Text(t.t('compare')),
             onTap: () => Navigator.pushNamed(context, '/compare'),
@@ -109,6 +115,12 @@ class ProfileTab extends StatelessWidget {
             leading: const Icon(IconlyLight.paper),
             title: Text(t.t('guides')),
             onTap: () => Navigator.pushNamed(context, '/guides'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.tips_and_updates_outlined),
+            title: Text(t.t('community_tips')),
+            subtitle: Text(t.t('community_tips_hint')),
+            onTap: () => Navigator.pushNamed(context, '/tips'),
           ),
           ListTile(
             leading: const Icon(IconlyLight.star),

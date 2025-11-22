@@ -12,6 +12,9 @@ class UserSettings {
   final double textScale;
   final bool reduceMotion;
   final bool highContrast;
+  final bool allowAnalytics;
+  final bool allowPersonalization;
+  final bool allowEmailTips;
 
   const UserSettings({
     required this.themeMode,
@@ -22,6 +25,9 @@ class UserSettings {
     this.textScale = 1.0,
     this.reduceMotion = false,
     this.highContrast = false,
+    this.allowAnalytics = true,
+    this.allowPersonalization = true,
+    this.allowEmailTips = true,
   });
 
   UserSettings copyWith({
@@ -33,6 +39,9 @@ class UserSettings {
     double? textScale,
     bool? reduceMotion,
     bool? highContrast,
+    bool? allowAnalytics,
+    bool? allowPersonalization,
+    bool? allowEmailTips,
   }) {
     return UserSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -43,6 +52,10 @@ class UserSettings {
       textScale: textScale ?? this.textScale,
       reduceMotion: reduceMotion ?? this.reduceMotion,
       highContrast: highContrast ?? this.highContrast,
+      allowAnalytics: allowAnalytics ?? this.allowAnalytics,
+      allowPersonalization:
+          allowPersonalization ?? this.allowPersonalization,
+      allowEmailTips: allowEmailTips ?? this.allowEmailTips,
     );
   }
 }

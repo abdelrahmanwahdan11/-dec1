@@ -71,6 +71,8 @@ import 'screens/quiz/quiz_screen.dart';
 import 'screens/membership/membership_screen.dart';
 import 'screens/accessibility/accessibility_screen.dart';
 import 'screens/encyclopedia/encyclopedia_screen.dart';
+import 'screens/tips/community_tips_screen.dart';
+import 'screens/privacy/privacy_center_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -117,6 +119,9 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     final textScale = prefs.getDouble('text_scale') ?? 1.0;
     final reduceMotion = prefs.getBool('reduce_motion') ?? false;
     final highContrast = prefs.getBool('high_contrast') ?? false;
+    final analytics = prefs.getBool('analytics_opt_in') ?? true;
+    final personalization = prefs.getBool('personalization_opt_in') ?? true;
+    final emailTips = prefs.getBool('email_tips_opt_in') ?? true;
     return UserSettings(
       themeMode: AppThemeMode.values.firstWhere(
         (e) => e.name == theme,
@@ -129,6 +134,9 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
       textScale: textScale,
       reduceMotion: reduceMotion,
       highContrast: highContrast,
+      allowAnalytics: analytics,
+      allowPersonalization: personalization,
+      allowEmailTips: emailTips,
     );
   }
 
@@ -200,10 +208,13 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
         final settings = snapshot.data!;
         themeController = ThemeController(settings);
         localeController = LocaleController(settings.localeCode);
-        accessibilityController = AccessibilityController(
+        accessibilityController = AccessibilityController.withPrivacy(
           textScale: settings.textScale,
           reduceMotion: settings.reduceMotion,
           highContrast: settings.highContrast,
+          allowAnalytics: settings.allowAnalytics,
+          allowPersonalization: settings.allowPersonalization,
+          allowEmailTips: settings.allowEmailTips,
         );
         if (settings.isGuest) {
           authController.continueAsGuest();
@@ -779,6 +790,37 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               accessibilityController: accessibilityController,
                               child: const GuidesScreen(),
                             ));
+                  case '/tips':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              promoController: promoController,
+                              referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
+                              journalController: journalController,
+                              changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
+                              gardenController: gardenController,
+                              challengesController: challengesController,
+                              quizController: quizController,
+                              membershipController: membershipController,
+                              accessibilityController: accessibilityController,
+                              child: const CommunityTipsScreen(),
+                            ));
                   case '/encyclopedia':
                     return MaterialPageRoute(
                         builder: (_) => AppScope(
@@ -1283,6 +1325,37 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               membershipController: membershipController,
                               accessibilityController: accessibilityController,
                               child: const AccessibilityScreen(),
+                            ));
+                  case '/privacy':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              promoController: promoController,
+                              referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
+                              journalController: journalController,
+                              changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
+                              gardenController: gardenController,
+                              challengesController: challengesController,
+                              quizController: quizController,
+                              membershipController: membershipController,
+                              accessibilityController: accessibilityController,
+                              child: const PrivacyCenterScreen(),
                             ));
                   default:
                     if (name != null && name.startsWith('/plant/')) {

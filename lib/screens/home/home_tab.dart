@@ -365,6 +365,24 @@ class HomeTab extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            card(
+              onTap: () => Navigator.pushNamed(context, '/tips'),
+              icon: Icons.tips_and_updates_outlined,
+              title: t.t('community_tips'),
+              subtitle: t.t('community_tips_hint'),
+            ),
+            const SizedBox(width: 10),
+            card(
+              onTap: () => Navigator.pushNamed(context, '/privacy'),
+              icon: Icons.lock_outline,
+              title: t.t('privacy_center'),
+              subtitle: t.t('privacy_controls_hint'),
+            ),
+          ],
+        ),
       ],
     );
   }
