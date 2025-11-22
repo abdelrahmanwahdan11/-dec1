@@ -13,6 +13,8 @@ import 'controllers/care_controller.dart';
 import 'controllers/notifications_controller.dart';
 import 'controllers/guides_controller.dart';
 import 'controllers/rewards_controller.dart';
+import 'controllers/address_controller.dart';
+import 'controllers/recent_controller.dart';
 import 'localization/app_localizations.dart';
 import 'models/user_settings.dart';
 import 'data/mock_orders.dart';
@@ -36,6 +38,8 @@ import 'screens/guides/guides_screen.dart';
 import 'screens/rewards/rewards_screen.dart';
 import 'screens/orders/tracking_screen.dart';
 import 'screens/support/support_screen.dart';
+import 'screens/profile/address_book_screen.dart';
+import 'screens/profile/recently_viewed_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -56,6 +60,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
   late final NotificationsController notificationsController;
   late final GuidesController guidesController;
   late final RewardsController rewardsController;
+  late final AddressController addressController;
+  late final RecentController recentController;
 
   Future<UserSettings> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -88,6 +94,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     notificationsController = NotificationsController();
     guidesController = GuidesController();
     rewardsController = RewardsController();
+    addressController = AddressController();
+    recentController = RecentController();
   }
 
   @override
@@ -98,6 +106,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     notificationsController.dispose();
     guidesController.dispose();
     rewardsController.dispose();
+    addressController.dispose();
+    recentController.dispose();
     super.dispose();
   }
 
@@ -173,6 +183,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                         notificationsController: notificationsController,
                         guidesController: guidesController,
                         rewardsController: rewardsController,
+                        addressController: addressController,
+                        recentController: recentController,
                         catalogController: catalogController,
                         child: const MainShellScreen(),
                       ),
@@ -190,6 +202,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const CompareScreen(),
                             ));
@@ -206,6 +220,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const CheckoutScreen(),
                             ));
@@ -224,6 +240,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const StoresScreen(),
                             ));
@@ -240,6 +258,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const OrdersScreen(),
                             ));
@@ -257,6 +277,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: TrackingScreen(orderId: orderId ?? mockOrders.first.id),
                             ));
@@ -273,6 +295,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const AboutScreen(),
                             ));
@@ -289,6 +313,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const SupportScreen(),
                             ));
@@ -305,6 +331,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const FavoritesScreen(),
                             ));
@@ -321,6 +349,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const CareScheduleScreen(),
                             ));
@@ -337,6 +367,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const NotificationCenterScreen(),
                             ));
@@ -353,6 +385,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const GuidesScreen(),
                             ));
@@ -369,8 +403,46 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               notificationsController: notificationsController,
                               guidesController: guidesController,
                               rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
                               catalogController: catalogController,
                               child: const RewardsScreen(),
+                            ));
+                  case '/addresses':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              child: const AddressBookScreen(),
+                            ));
+                  case '/recent':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              child: const RecentlyViewedScreen(),
                             ));
                   default:
                     if (name != null && name.startsWith('/plant/')) {
@@ -387,6 +459,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                           notificationsController: notificationsController,
                           guidesController: guidesController,
                           rewardsController: rewardsController,
+                          addressController: addressController,
+                          recentController: recentController,
                           catalogController: catalogController,
                           child: PlantDetailsScreen(plantId: id),
                         ),
@@ -420,6 +494,8 @@ class AppScope extends InheritedWidget {
   final NotificationsController notificationsController;
   final GuidesController guidesController;
   final RewardsController rewardsController;
+  final AddressController addressController;
+  final RecentController recentController;
   final PlantCatalogController catalogController;
 
   const AppScope({
@@ -434,6 +510,8 @@ class AppScope extends InheritedWidget {
     required this.notificationsController,
     required this.guidesController,
     required this.rewardsController,
+    required this.addressController,
+    required this.recentController,
     required this.catalogController,
     required Widget child,
   }) : super(child: child);

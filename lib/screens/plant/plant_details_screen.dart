@@ -20,9 +20,21 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
   bool flipped = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final app = AppScope.of(context);
+      final plant = app.catalogController.findById(widget.plantId);
+      if (plant != null) {
+        app.recentController.add(plant.id);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final plant = mockPlants.firstWhere((p) => p.id == widget.plantId);
     final app = AppScope.of(context);
+    final plant = app.catalogController.findById(widget.plantId) ?? mockPlants.first;
     final t = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context);
     return Scaffold(
@@ -65,18 +77,18 @@ class _PlantDetailsScreenState extends State<PlantDetailsScreen> {
                         ),
                         if (flipped)
                           Positioned.fill(
-                        child: Container(
-                          color: Colors.black.withOpacity(0.55),
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: Text(
-                                plant.localizedLongDescription(locale),
-                                style:
-                                    const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                            child: Container(
+                              color: Colors.black.withOpacity(0.55),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Text(
+                                    plant.localizedLongDescription(locale),
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
                             ),
                           ),
                       ],

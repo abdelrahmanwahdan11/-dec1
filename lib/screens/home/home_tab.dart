@@ -105,6 +105,8 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 16),
           _quickActions(context, app, t),
           const SizedBox(height: 16),
+          _recentlyViewed(context, app, locale, t),
+          const SizedBox(height: 16),
           _careStrip(context, app),
           const SizedBox(height: 16),
           Text(t.t('categories'), style: Theme.of(context).textTheme.titleMedium),
@@ -258,6 +260,56 @@ class HomeTab extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _recentlyViewed(
+      BuildContext context, AppScope app, Locale locale, AppLocalizations t) {
+    return ValueListenableBuilder<List<String>>(
+      valueListenable: app.recentController.ids,
+      builder: (context, ids, _) {
+        if (ids.isEmpty) return const SizedBox.shrink();
+        final plants = ids
+            .map((id) => app.catalogController.findById(id))
+            .whereType<Plant>()
+            .toList();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+                children: [
+                  Expanded(
+                  child: Text(t.t('recently_viewed'),
+                      style: Theme.of(context).textTheme.titleMedium),
+                  ),
+                TextButton(
+                  onPressed: () => Navigator.pushNamed(context, '/recent'),
+                  child: Text(t.t('open')),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: plants.length,
+                itemBuilder: (context, index) {
+                  final plant = plants[index];
+                  return SizedBox(
+                    width: 180,
+                    child: PlantCard(
+                      plant: plant,
+                      onTap: () => Navigator.pushNamed(context, '/plant/${plant.id}'),
+                    )
+                        .animate()
+                        .fadeIn(delay: (index * 70).ms)
+                        .slideX(begin: locale.languageCode == 'ar' ? 0.1 : -0.1);
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

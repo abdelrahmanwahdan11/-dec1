@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../app.dart';
 import '../../localization/app_localizations.dart';
 import '../../widgets/primary_button.dart';
+import '../../models/user_address.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -31,6 +32,52 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              ValueListenableBuilder<List<UserAddress>>(
+                valueListenable: app.addressController.addresses,
+                builder: (context, addresses, _) {
+                  final address = app.addressController.defaultAddress;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.location_pin, size: 28),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: address == null
+                              ? Text(t.t('empty_addresses'))
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(t.t('shipping_address'),
+                                        style: Theme.of(context).textTheme.titleMedium),
+                                    const SizedBox(height: 4),
+                                    Text(address.name, style: Theme.of(context).textTheme.bodyLarge),
+                                    Text(address.street),
+                                    Text(address.city),
+                                    Text(address.phone),
+                                  ],
+                                ),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pushNamed(context, '/addresses'),
+                          child: Text(
+                            addresses.isEmpty
+                                ? t.t('add_address')
+                                : t.t('manage_addresses'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
               Text(t.t('saved_cards'), style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
               SizedBox(

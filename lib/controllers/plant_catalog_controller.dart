@@ -55,6 +55,12 @@ class PlantCatalogController {
   PlantCategory? get category => _category;
   PlantDifficulty? get difficulty => _difficulty;
 
+  Plant? findById(String id) {
+    final match = _all.where((p) => p.id == id);
+    if (match.isEmpty) return null;
+    return match.first;
+  }
+
   void _emit() {
     final filtered = _filter();
     final pageItems = filtered.take(_page * _pageSize).toList();
