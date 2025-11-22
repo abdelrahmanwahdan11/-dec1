@@ -8,6 +8,8 @@ import '../../models/plant.dart';
 import '../../models/app_notification.dart';
 import '../../models/plant_care_task.dart';
 import '../../models/journal_entry.dart';
+import '../../models/plant_event.dart';
+import '../../models/gallery_item.dart';
 import '../../widgets/plant_card.dart';
 import '../../widgets/primary_button.dart';
 
@@ -109,6 +111,10 @@ class HomeTab extends StatelessWidget {
           _savingsStrip(context, app, t),
           const SizedBox(height: 16),
           _updatesBanner(context, app, t),
+          const SizedBox(height: 16),
+          _eventsPeek(context, app, t, locale.languageCode),
+          const SizedBox(height: 16),
+          _galleryPeek(context, app, t, locale.languageCode),
           const SizedBox(height: 16),
           _insightsStrip(context, app, t),
           const SizedBox(height: 16),
@@ -471,6 +477,158 @@ class HomeTab extends StatelessWidget {
           ).animate().fadeIn(duration: 240.ms).slideX(begin: -0.03),
         );
       },
+    );
+  }
+
+  Widget _eventsPeek(
+      BuildContext context, AppScope app, AppLocalizations t, String localeCode) {
+    final events = app.eventsController.upcomingOnly().take(2).toList();
+    if (events.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(t.t('events'), style: Theme.of(context).textTheme.titleMedium),
+            const Spacer(),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/events'),
+              child: Text(t.t('view_all')),
+            )
+          ],
+        ),
+        const SizedBox(height: 6),
+        ...events.map((event) {
+          final isRsvped = app.eventsController.isRsvped(event.id);
+          return Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: AppThemeBuilder.cardShadow(Theme.of(context)),
+            ),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(event.imageUrl, width: 70, height: 70, fit: BoxFit.cover)
+                      .animate()
+                      .scale(duration: 240.ms),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(event.localizedTitle(localeCode),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(height: 4),
+                      Text(event.localizedLocation(localeCode),
+                          style: Theme.of(context).textTheme.bodySmall),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => app.eventsController.toggleRsvp(event.id),
+                  icon: Icon(
+                    isRsvped ? IconlyBold.calendar : IconlyLight.calendar,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                )
+              ],
+            ),
+          ).animate(delay: 80.ms).fadeIn(duration: 280.ms).slideX(begin: 0.05);
+        })
+      ],
+    );
+  }
+
+  Widget _galleryPeek(
+      BuildContext context, AppScope app, AppLocalizations t, String localeCode) {
+    final gallery = app.galleryController.gallery.value;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(t.t('gallery'), style: Theme.of(context).textTheme.titleMedium),
+            const Spacer(),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/gallery'),
+              child: Text(t.t('view_all')),
+            )
+          ],
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 160,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: gallery.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final item = gallery[index];
+              final liked = app.galleryController.isLiked(item.id);
+              return Container(
+                width: 220,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: AppThemeBuilder.cardShadow(Theme.of(context)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(item.imageUrl,
+                                  width: 90, height: 70, fit: BoxFit.cover)
+                              .animate()
+                              .scale(duration: 220.ms),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(item.localizedTitle(localeCode),
+                                  style: Theme.of(context).textTheme.titleSmall),
+                              const SizedBox(height: 4),
+                              Text(item.localizedCaption(localeCode),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodySmall),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        Text(t.t('gallery_hint'),
+                            style: Theme.of(context).textTheme.bodySmall),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () => app.galleryController.toggleLike(item.id),
+                          icon: Icon(
+                            liked ? IconlyBold.heart : IconlyLight.heart,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ).animate(delay: (index * 60).ms).fadeIn().slideX(begin: 0.08);
+            },
+          ),
+        )
+      ],
     );
   }
 

@@ -181,6 +181,18 @@ class ProfileTab extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, '/inspiration'),
           ),
           ListTile(
+            leading: const Icon(IconlyLight.calendar),
+            title: Text(t.t('events')),
+            subtitle: Text(t.t('events_subtitle')),
+            onTap: () => Navigator.pushNamed(context, '/events'),
+          ),
+          ListTile(
+            leading: const Icon(IconlyLight.image),
+            title: Text(t.t('gallery')),
+            subtitle: Text(t.t('gallery_hint')),
+            onTap: () => Navigator.pushNamed(context, '/gallery'),
+          ),
+          ListTile(
             leading: const Icon(IconlyLight.location),
             title: Text(t.t('stores')),
             onTap: () => Navigator.pushNamed(context, '/stores'),

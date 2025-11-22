@@ -21,6 +21,8 @@ import 'controllers/diagnostics_controller.dart';
 import 'controllers/gift_controller.dart';
 import 'controllers/journal_controller.dart';
 import 'controllers/changelog_controller.dart';
+import 'controllers/events_controller.dart';
+import 'controllers/gallery_controller.dart';
 import 'localization/app_localizations.dart';
 import 'models/user_settings.dart';
 import 'data/mock_orders.dart';
@@ -56,6 +58,8 @@ import 'screens/gifting/gifting_screen.dart';
 import 'screens/journal/journal_screen.dart';
 import 'screens/updates/updates_screen.dart';
 import 'screens/insights/insights_screen.dart';
+import 'screens/events/events_screen.dart';
+import 'screens/gallery/gallery_screen.dart';
 
 class PlantsFresherApp extends StatefulWidget {
   const PlantsFresherApp({super.key});
@@ -84,6 +88,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
   late final GiftController giftController;
   late final JournalController journalController;
   late final ChangelogController changelogController;
+  late final EventsController eventsController;
+  late final GalleryController galleryController;
 
   Future<UserSettings> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -124,6 +130,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     giftController = GiftController();
     journalController = JournalController();
     changelogController = ChangelogController();
+    eventsController = EventsController();
+    galleryController = GalleryController();
   }
 
   @override
@@ -142,6 +150,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
     giftController.dispose();
     journalController.dispose();
     changelogController.dispose();
+    eventsController.dispose();
+    galleryController.dispose();
     super.dispose();
   }
 
@@ -226,6 +236,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                         giftController: giftController,
                         journalController: journalController,
                         changelogController: changelogController,
+                        eventsController: eventsController,
+                        galleryController: galleryController,
                         child: const MainShellScreen(),
                       ),
                     );
@@ -251,6 +263,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const CompareScreen(),
                             ));
                   case '/checkout':
@@ -275,6 +289,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const CheckoutScreen(),
                             ));
                   case '/success':
@@ -301,6 +317,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const StoresScreen(),
                             ));
                   case '/orders':
@@ -325,6 +343,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const OrdersScreen(),
                             ));
                   case '/tracking':
@@ -350,6 +370,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: TrackingScreen(orderId: orderId ?? mockOrders.first.id),
                             ));
                   case '/about':
@@ -374,6 +396,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const AboutScreen(),
                             ));
                   case '/support':
@@ -398,6 +422,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const SupportScreen(),
                             ));
                   case '/favorites':
@@ -422,6 +448,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const FavoritesScreen(),
                             ));
                   case '/care':
@@ -446,6 +474,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const CareScheduleScreen(),
                             ));
                   case '/care/calendar':
@@ -470,6 +500,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const CareCalendarScreen(),
                             ));
                   case '/notifications':
@@ -494,6 +526,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const NotificationCenterScreen(),
                             ));
                   case '/guides':
@@ -518,6 +552,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const GuidesScreen(),
                             ));
                   case '/rewards':
@@ -542,6 +578,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const RewardsScreen(),
                             ));
                   case '/bundles':
@@ -606,6 +644,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const AddressBookScreen(),
                             ));
                   case '/recent':
@@ -630,6 +670,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const RecentlyViewedScreen(),
                             ));
                   case '/coupons':
@@ -654,6 +696,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const CouponsScreen(),
                             ));
                   case '/referrals':
@@ -678,6 +722,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const ReferralsScreen(),
                             ));
                 case '/diagnostics':
@@ -702,6 +748,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                             giftController: giftController,
                             journalController: journalController,
                             changelogController: changelogController,
+                            eventsController: eventsController,
+                            galleryController: galleryController,
                             child: const DiagnosticsScreen(),
                           ));
                 case '/gifting':
@@ -726,6 +774,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                             giftController: giftController,
                             journalController: journalController,
                             changelogController: changelogController,
+                            eventsController: eventsController,
+                            galleryController: galleryController,
                             child: const GiftingScreen(),
                           ));
                 case '/journal':
@@ -750,6 +800,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                             giftController: giftController,
                             journalController: journalController,
                             changelogController: changelogController,
+                            eventsController: eventsController,
+                            galleryController: galleryController,
                             child: const JournalScreen(),
                           ));
                   case '/updates':
@@ -774,6 +826,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const UpdatesScreen(),
                             ));
                   case '/insights':
@@ -798,7 +852,61 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                               giftController: giftController,
                               journalController: journalController,
                               changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
                               child: const InsightsScreen(),
+                            ));
+                  case '/events':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              promoController: promoController,
+                              referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
+                              journalController: journalController,
+                              changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
+                              child: const EventsScreen(),
+                            ));
+                  case '/gallery':
+                    return MaterialPageRoute(
+                        builder: (_) => AppScope(
+                              authController: authController,
+                              themeController: themeController,
+                              localeController: localeController,
+                              cartController: cartController,
+                              compareController: compareController,
+                              favoritesController: favoritesController,
+                              careController: careController,
+                              notificationsController: notificationsController,
+                              guidesController: guidesController,
+                              rewardsController: rewardsController,
+                              addressController: addressController,
+                              recentController: recentController,
+                              catalogController: catalogController,
+                              promoController: promoController,
+                              referralController: referralController,
+                              diagnosticsController: diagnosticsController,
+                              giftController: giftController,
+                              journalController: journalController,
+                              changelogController: changelogController,
+                              eventsController: eventsController,
+                              galleryController: galleryController,
+                              child: const GalleryScreen(),
                             ));
                   default:
                     if (name != null && name.startsWith('/plant/')) {
@@ -824,6 +932,8 @@ class _PlantsFresherAppState extends State<PlantsFresherApp> {
                           giftController: giftController,
                           journalController: journalController,
                           changelogController: changelogController,
+                          eventsController: eventsController,
+                          galleryController: galleryController,
                           child: PlantDetailsScreen(plantId: id),
                         ),
                       );
@@ -865,6 +975,8 @@ class AppScope extends InheritedWidget {
   final GiftController giftController;
   final JournalController journalController;
   final ChangelogController changelogController;
+  final EventsController eventsController;
+  final GalleryController galleryController;
 
   const AppScope({
     super.key,
@@ -887,6 +999,8 @@ class AppScope extends InheritedWidget {
     required this.giftController,
     required this.journalController,
     required this.changelogController,
+    required this.eventsController,
+    required this.galleryController,
     required Widget child,
   }) : super(child: child);
 
