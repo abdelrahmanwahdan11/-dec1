@@ -5,6 +5,8 @@ import '../../app.dart';
 import '../../data/mock_plants.dart';
 import '../../localization/app_localizations.dart';
 import '../../models/plant.dart';
+import '../../models/app_notification.dart';
+import '../../models/plant_care_task.dart';
 import '../../widgets/plant_card.dart';
 import '../../widgets/primary_button.dart';
 
@@ -21,8 +23,42 @@ class HomeTab extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('${t.t('welcome')}, ${app.authController.displayName}',
-              style: Theme.of(context).textTheme.headlineSmall),
+          Row(
+            children: [
+              Expanded(
+                child: Text('${t.t('welcome')}, ${app.authController.displayName}',
+                    style: Theme.of(context).textTheme.headlineSmall),
+              ),
+              ValueListenableBuilder<List<AppNotification>>(
+                valueListenable: app.notificationsController.notifications,
+                builder: (context, notifications, _) {
+                  final unread = notifications.where((n) => !n.read).length;
+                  return Stack(
+                    children: [
+                      IconButton(
+                        icon: const Icon(IconlyLight.notification),
+                        onPressed: () => Navigator.pushNamed(context, '/notifications'),
+                      ),
+                      if (unread > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text('$unread',
+                                style: const TextStyle(color: Colors.white, fontSize: 10)),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           Container(
             decoration: BoxDecoration(
@@ -66,6 +102,8 @@ class HomeTab extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 16),
+          _careStrip(context, app),
           const SizedBox(height: 16),
           Text(t.t('categories'), style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
@@ -161,6 +199,49 @@ class HomeTab extends StatelessWidget {
       label: Text(label),
       onPressed: onTap,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    );
+  }
+
+  Widget _careStrip(BuildContext context, AppScope app) {
+    final t = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context);
+    return ValueListenableBuilder<List<PlantCareTask>>(
+      valueListenable: app.careController.tasks,
+      builder: (context, tasks, _) {
+        if (tasks.isEmpty) return const SizedBox.shrink();
+        final sorted = [...tasks];
+        sorted.sort((a, b) => a.dueDate.compareTo(b.dueDate));
+        final next = sorted.first;
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Icon(IconlyBold.calendar, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(t.t('up_next'), style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Text(next.localizedTitle(locale)),
+                    Text(t.t('due_in_hours').replaceFirst('{hours}', next.dueDate.difference(DateTime.now()).inHours.toString()),
+                        style: Theme.of(context).textTheme.bodySmall),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(IconlyLight.arrow_right_circle),
+                onPressed: () => Navigator.pushNamed(context, '/care'),
+              ),
+            ],
+          ),
+        ).animate().shimmer(duration: 1200.ms, color: Theme.of(context).colorScheme.primary.withOpacity(0.2));
+      },
     );
   }
 }
